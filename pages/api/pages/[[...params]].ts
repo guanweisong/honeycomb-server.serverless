@@ -73,7 +73,7 @@ class PagesHandler {
   @Get('/:id')
   async findOne(@Param('id') id: mongoose.Schema.Types.ObjectId) {
     const result = await Page.findOne({ _id: id }).populate('page_author', 'user_name').lean();
-    result.post_content = converter.makeHtml(result.post_content);
+    result.page_content = converter.makeHtml(result.page_content);
     return result;
   }
 
@@ -86,14 +86,14 @@ class PagesHandler {
   }
 
   @Get('/:id/views')
-  findViews(@Param('id') id: mongoose.Schema.Types.ObjectId) {
-    return Page.findOne(id).then((result) => ({ count: result.post_views }));
+  async findViews(@Param('id') id: mongoose.Schema.Types.ObjectId) {
+    return Page.findOne({ _id: id }).then((result) => ({ count: result.page_views }));
   }
 
   @Patch('/:id/views')
   @HttpCode(HttpStatus.CREATED)
   updateViews(@Param('id') id: mongoose.Schema.Types.ObjectId) {
-    return Page.findByIdAndUpdate({ _id: id }, { $inc: { post_views: 1 } }, { upsert: true });
+    return Page.findByIdAndUpdate({ _id: id }, { $inc: { page_views: 1 } }, { upsert: true });
   }
 }
 

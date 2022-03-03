@@ -1,5 +1,5 @@
 import PaginationType from '../../../types/PaginationType';
-import { IsEnum, IsMongoId, IsOptional, IsString, MaxLength } from 'class-validator';
+import { IsArray, IsEnum, IsMongoId, IsOptional, IsString, MaxLength } from 'class-validator';
 import { Type } from 'class-transformer';
 import { PostType } from '@/server/post/types/postType';
 import { PostStatus } from '@/server/post/types/postStatus';
@@ -29,15 +29,15 @@ class PostListQueryDto extends PaginationType {
   @Type(() => String)
   public category_id: string;
 
-  @IsEnum(PostType, { message: '文章类型非法' })
+  @IsArray({ message: '文章类型必须为数组' })
   @IsOptional()
   @Type(() => Number)
-  public post_type: PostType;
+  public post_type: PostType[];
 
-  @IsEnum(PostStatus, { message: '文章状态非法' })
+  @IsArray({ message: '文章状态必须为数组' })
   @IsOptional()
   @Type(() => Number)
-  public post_status: PostStatus;
+  public post_status: PostStatus[];
 
   @IsString()
   @IsOptional()

@@ -157,7 +157,7 @@ class PostsHandler {
 
   @Get('/:id/views')
   findViews(@Param('id') id: mongoose.Schema.Types.ObjectId) {
-    return PostModal.findOne(id).then((result) => ({ count: result.post_views }));
+    return PostModal.findOne({ _id: id }).then((result) => ({ count: result.post_views }));
   }
 
   @Patch('/:id/views')
