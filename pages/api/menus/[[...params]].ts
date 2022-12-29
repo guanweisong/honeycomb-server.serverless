@@ -5,7 +5,7 @@ import {
   Patch,
   Body,
   HttpCode,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import Menu from '@/server/menu/models/menu';
 import DatabaseGuard from '@/middlewares/database.middlewar';
 import { HttpStatus } from '@/types/HttpStatus';

@@ -3,7 +3,7 @@ import {
   createMiddlewareDecorator,
   NextFunction,
   InternalServerErrorException,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 const DatabaseGuard = createMiddlewareDecorator(

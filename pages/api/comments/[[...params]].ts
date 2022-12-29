@@ -9,7 +9,7 @@ import {
   Body,
   Param,
   HttpCode,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 // @ts-ignore
 import listToTree from 'list-to-tree-lite';
 import md5 from 'md5';

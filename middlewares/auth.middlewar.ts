@@ -2,7 +2,7 @@ import {
   createMiddlewareDecorator,
   NextFunction,
   ForbiddenException,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import { NextApiRequest, NextApiResponse } from 'next';
 import moment from 'moment';
 import Token from '@/server/token/models/token';

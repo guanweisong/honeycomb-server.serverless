@@ -2,7 +2,7 @@ import {
   createMiddlewareDecorator,
   HttpException,
   NextFunction,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import { NextApiRequest, NextApiResponse } from 'next';
 import axios from 'axios';
 import { HttpStatus } from '@/types/HttpStatus';

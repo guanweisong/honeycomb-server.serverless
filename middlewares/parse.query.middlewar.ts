@@ -1,4 +1,4 @@
-import { createMiddlewareDecorator, NextFunction } from '@storyofams/next-api-decorators';
+import { createMiddlewareDecorator, NextFunction } from 'next-api-decorators';
 import { NextApiRequest, NextApiResponse } from 'next';
 import Tools from '@/utils/tools';
 

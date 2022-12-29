@@ -4,7 +4,7 @@ import {
   Get,
   Query,
   HttpCode,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import Token from '@/server/token/models/token';
 import DatabaseGuard from '@/middlewares/database.middlewar';
 import ParseQueryGuard from '@/middlewares/parse.query.middlewar';

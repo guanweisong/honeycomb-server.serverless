@@ -8,7 +8,7 @@ import {
   Req,
   Res,
   ValidationPipe,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import { NextApiRequest, NextApiResponse } from 'next';
 import { encode } from 'next-auth/jwt';
 import User from '@/server/user/models/user';

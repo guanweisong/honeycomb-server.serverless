@@ -9,7 +9,7 @@ import {
   Query,
   ValidationPipe,
   createHandler,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 const showdown = require('showdown');
 import ParseQueryGuard from '@/middlewares/parse.query.middlewar';
 import DatabaseGuard from '@/middlewares/database.middlewar';

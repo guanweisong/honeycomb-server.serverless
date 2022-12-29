@@ -9,7 +9,7 @@ import {
   Body,
   Param,
   HttpCode,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import Tools from '@/utils/tools';
 import TagListQueryDto from '@/server/tag/dtos/tag.list.query.dto';
 import Tag from '@/server/tag/models/tag';

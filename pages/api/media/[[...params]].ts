@@ -7,7 +7,7 @@ import {
   Query,
   UploadedFile,
   ValidationPipe,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import Media from '@/server/media/models/media';
 import DatabaseGuard from '@/middlewares/database.middlewar';
 import ParseQueryGuard from '@/middlewares/parse.query.middlewar';

@@ -7,7 +7,7 @@ import {
   Param,
   Patch,
   ValidationPipe,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import DatabaseGuard from '@/middlewares/database.middlewar';
 import SettingUpdateDto from '@/server/setting/dtos/setting.update.dto';
 import { HttpStatus } from '@/types/HttpStatus';

@@ -9,7 +9,7 @@ import {
   Body,
   Param,
   HttpCode,
-} from '@storyofams/next-api-decorators';
+} from 'next-api-decorators';
 import Tools from '@/utils/tools';
 import CategoryListQueryDto from '@/server/category/dtos/category.list.query.dto';
 import Category from '@/server/category/models/category';
