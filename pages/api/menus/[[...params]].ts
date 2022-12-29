@@ -53,7 +53,7 @@ class MenusHandler {
   @Auth([UserLevel.ADMIN])()
   async findOneAndUpdate(@Body(ValidationPipe) data: MenuUpdateDto[]) {
     await Menu.deleteMany();
-    return Menu.insertMany(MenuUpdateDto);
+    return Menu.insertMany(data);
   }
 }
 

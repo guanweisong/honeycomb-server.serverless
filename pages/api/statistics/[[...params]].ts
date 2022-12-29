@@ -1,4 +1,4 @@
-import { createHandler, UseMiddleware, Get } from 'next-api-decorators';
+import { createHandler, Get } from 'next-api-decorators';
 import DatabaseGuard from '@/middlewares/database.middlewar';
 import PostModel from '@/server/post/models/post';
 import User from '@/server/user/models/user';
