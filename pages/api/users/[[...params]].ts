@@ -31,11 +31,13 @@ class UsersHandler {
     query: UserListQueryDto,
   ) {
     const { page, limit, ...rest } = query;
-    const conditions = Tools.getFindConditionsByQueries(
-      rest,
-      ['user_level', 'user_status', 'user_name', 'user_email'],
-      ['user_name', 'user_email'],
-    );
+    const conditions = Tools.getFindConditionsByQueries(rest, [
+      'user_level',
+      'user_status',
+      'user_name',
+      'user_email',
+      '_id',
+    ]);
     const list = await User.find(conditions, { user_password: 0 })
       .limit(limit)
       .skip((page - 1) * limit)

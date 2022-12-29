@@ -31,7 +31,7 @@ class TagsHandler {
     query: TagListQueryDto,
   ) {
     const { page, limit, ...rest } = query;
-    const conditions = Tools.getFindConditionsByQueries(rest, ['tag_name'], ['tag_name']);
+    const conditions = Tools.getFindConditionsByQueries(rest, ['tag_name']);
     const list = await Tag.find(conditions)
       .limit(limit)
       .skip((page - 1) * limit)

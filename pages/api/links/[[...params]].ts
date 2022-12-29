@@ -31,11 +31,10 @@ class LinksHandler {
     query: LinkListQueryDto,
   ) {
     const { page, limit, ...rest } = query;
-    const conditions = Tools.getFindConditionsByQueries(
-      rest,
-      ['link_status', 'link_url'],
-      ['link_url', 'link_name'],
-    );
+    const conditions = Tools.getFindConditionsByQueries(rest, [
+      'link_status',
+      'link_url',
+    ]);
     const list = await Link.find(conditions)
       .limit(limit)
       .skip((page - 1) * limit)

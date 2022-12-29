@@ -35,11 +35,10 @@ class PagesHandler {
     query: PageListQueryDto,
   ) {
     const { page, limit, ...rest } = query;
-    const conditions = Tools.getFindConditionsByQueries(
-      rest,
-      ['page_status', 'page_author'],
-      ['page_title'],
-    );
+    const conditions = Tools.getFindConditionsByQueries(rest, [
+      'page_status',
+      'page_author',
+    ]);
 
     const list = await Page.find(conditions)
       .find(conditions)

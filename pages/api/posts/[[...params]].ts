@@ -94,6 +94,7 @@ class PostsHandler {
     }
     const list = await PostModal.aggregate([
       { $match: conditions },
+      // @ts-ignore
       { $sort: { [sortField]: SortType[sortOrder] } },
       { $skip: (page - 1) * limit },
       { $limit: limit },
