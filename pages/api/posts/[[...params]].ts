@@ -28,6 +28,7 @@ import PostListQueryDto from '@/server/post/dtos/post.list.query.dto';
 import { SortType } from '@/types/SortType';
 import Auth from '@/middlewares/auth.middlewar';
 import { UserLevel } from '@/server/user/types/UserLevel';
+import PostRandomListQueryDto from '@/server/post/dtos/post.random.list.query.dto';
 
 const converter = new showdown.Converter();
 
@@ -279,6 +280,22 @@ class PostsHandler {
       .lean());
     result.post_content = converter.makeHtml(result.post_content);
     return result;
+  }
+
+  @Get('/:id/random')
+  @ParseQueryGuard()
+  async random(@Param('id') id: mongoose.Schema.Types.ObjectId, @Query(ValidationPipe) query: PostRandomListQueryDto) {
+    const { number } = query;
+    const list = await PostModal.aggregate([
+      {
+        $match: {
+          // post_category: id,
+        },
+      },
+      { $project: { post_title: 1, quote_content: 1 } },
+      { $sample: { size: number } },
+    ]);
+    return list;
   }
 
   @Patch('/:id')
