@@ -60,9 +60,7 @@ class CommentsHandler {
               return {
                 ...item,
                 _id: item._id.toString(),
-                comment_avatar: `//www.gravatar.com/avatar/${md5(
-                  item.comment_email.trim().toLowerCase(),
-                )}?s=48&d=identicon`,
+                comment_avatar: `https://cravatar.cn/avatar/${md5(item.comment_email.trim().toLowerCase())}?s=48&d=identicon`,
               };
             }),
             {
