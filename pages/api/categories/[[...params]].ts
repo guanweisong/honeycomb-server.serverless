@@ -22,7 +22,7 @@ import CategoryUpdateDto from '@/server/category/dtos/category.update.dto';
 import Auth from '@/middlewares/auth.middlewar';
 import { UserLevel } from '@/server/user/types/UserLevel';
 
-class TagsHandler {
+class CategoriesHandler {
   @Get()
   @ParseQueryGuard()
   @DatabaseGuard()
@@ -70,4 +70,4 @@ class TagsHandler {
   }
 }
 
-export default createHandler(TagsHandler);
+export default createHandler(CategoriesHandler);
