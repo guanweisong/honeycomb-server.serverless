@@ -50,7 +50,7 @@ class Tools {
       for (const value of arr) {
         if (
           (value.category_parent === undefined && id === undefined) ||
-          value.category_parent?.equals(id)
+          value.category_parent === id
         ) {
           value.deep_path = lev;
           temp.push(value);

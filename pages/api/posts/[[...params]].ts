@@ -50,7 +50,9 @@ class PostsHandler {
     ]);
     const $or = [];
     if (category_id) {
-      const categoryList = await Category.find({ _id: category_id });
+      const categoryListAll = await Category.find();
+      const categoryList = Tools.sonsTree(categoryListAll, category_id);
+      console.log(2222, categoryList);
       $or.push({ post_category: category_id });
       categoryList.forEach((item) => {
         $or.push({ post_category: item._id });
