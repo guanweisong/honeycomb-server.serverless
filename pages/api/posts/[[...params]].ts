@@ -29,6 +29,7 @@ import { SortType } from '@/types/SortType';
 import Auth from '@/middlewares/auth.middlewar';
 import { UserLevel } from '@/server/user/types/UserLevel';
 import PostRandomListQueryDto from '@/server/post/dtos/post.random.list.query.dto';
+import {ObjectId} from "mongodb";
 
 const converter = new showdown.Converter();
 
@@ -52,8 +53,7 @@ class PostsHandler {
     if (category_id) {
       const categoryListAll = await Category.find();
       const categoryList = Tools.sonsTree(categoryListAll, category_id);
-      console.log(2222, categoryList);
-      $or.push({ post_category: category_id });
+      $or.push({ post_category: new ObjectId(category_id) });
       categoryList.forEach((item) => {
         $or.push({ post_category: item._id });
       });
