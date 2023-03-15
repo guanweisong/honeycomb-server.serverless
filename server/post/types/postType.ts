@@ -1,6 +1,6 @@
 export enum PostType {
-  ARTICLE,
-  MOVIE,
-  PHOTOGRAPH,
-  QUOTE,
+  ARTICLE = 'ARTICLE',
+  MOVIE = 'MOVIE',
+  PHOTOGRAPH = 'PHOTOGRAPH',
+  QUOTE = 'QUOTE',
 }

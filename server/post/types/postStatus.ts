@@ -1,5 +1,5 @@
 export enum PostStatus {
-  PUBLISHED,
-  DRAFT,
-  TO_AUDIT,
+  PUBLISHED = 'PUBLISHED',
+  DRAFT = 'DRAFT',
+  TO_AUDIT = 'TO_AUDIT',
 }

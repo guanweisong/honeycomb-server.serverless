@@ -1,42 +1,42 @@
-import { IsNotEmpty, MaxLength, IsString, IsOptional } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsOptional, IsString, MaxLength } from 'class-validator';
 
 class SettingUpdateDto {
   @MaxLength(50, { message: '网站名称最大长度不可超过50' })
   @IsOptional()
   @IsString()
   @Type(() => String)
-  public site_name: string;
+  public siteName: string;
 
   @MaxLength(100, { message: '网站副标题最大长度不可超过100' })
   @IsOptional()
   @IsString()
   @Type(() => String)
-  public site_subName: string;
+  public siteSubName: string;
 
   @MaxLength(100, { message: '网站签名最大长度不可超过100' })
   @IsOptional()
   @IsString()
   @Type(() => String)
-  public site_signature: string;
+  public siteSignature: string;
 
   @MaxLength(100, { message: '版权信息最大长度不可超过100' })
   @IsOptional()
   @IsString()
   @Type(() => String)
-  public site_copyright: string;
+  public siteCopyright: string;
 
   @MaxLength(100, { message: '备案号最大长度不可超过100' })
   @IsOptional()
   @IsString()
   @Type(() => String)
-  public site_record_no: string;
+  public siteRecordNo: string;
 
   @MaxLength(100, { message: '工信部网址最大长度不可超过100' })
   @IsOptional()
   @IsString()
   @Type(() => String)
-  public site_record_url: string;
+  public siteRecordUrl: string;
 }
 
 export default SettingUpdateDto;

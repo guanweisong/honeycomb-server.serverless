@@ -1,6 +1,6 @@
-import { PostType } from '@/server/post/types/postType';
 import { CommentStatus } from '@/server/comment/types/commentStatus';
-import { UserStatus } from '@/server/user/types/UserStatus';
+import { PostType } from '@/server/post/types/postType';
+import { UserLevel } from '@/server/user/types/UserLevel';
 
 export class StatisticsInterface {
   postType: {
@@ -8,7 +8,7 @@ export class StatisticsInterface {
     count: number;
   }[];
   userType: {
-    item: UserStatus;
+    item: UserLevel;
     count: number;
   }[];
   userPost: {

@@ -137,7 +137,7 @@ export default async function cors(req: Request, res: Response, options?: CorsOp
         'Access-Control-Allow-Methods': 'GET,HEAD,PUT,PATCH,POST,DELETE',
         'Access-Control-Allow-Credentials': 'true',
         'Access-Control-Allow-Origin': req.headers.get('origin')!,
-        'Access-Control-Allow-Headers': 'content-type, x-auth-token',
+        'Access-Control-Allow-Headers': 'content-type, x-auth-token, x-requested-with',
       },
     });
   }
