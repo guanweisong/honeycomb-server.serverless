@@ -142,17 +142,7 @@ class PostsHandler {
     const total = await prisma.post.count({ where: conditions });
     return {
       list: list.map((item) => {
-        const {
-          movieActorIds,
-          movieDirectorIds,
-          galleryStyleIds,
-          movieStyleIds,
-          categoryId,
-          authorId,
-          coverId,
-          content,
-          ...rest
-        } = item;
+        const { content, ...rest } = item;
         return rest;
       }),
       total,
@@ -227,19 +217,9 @@ class PostsHandler {
       if (result.content) {
         result.content = converter.makeHtml(result.content);
       }
-      const {
-        movieActorIds,
-        movieDirectorIds,
-        galleryStyleIds,
-        movieStyleIds,
-        categoryId,
-        authorId,
-        coverId,
-        ...rest
-      } = result;
-      return rest;
+      return result;
     } else {
-      return;
+      return null;
     }
   }
 
