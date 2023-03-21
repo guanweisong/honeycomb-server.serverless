@@ -7,6 +7,7 @@ import TagListQueryDto from '@/server/tag/dtos/tag.list.query.dto';
 import TagUpdateDto from '@/server/tag/dtos/tag.update.dto';
 import { UserLevel } from '@/server/user/types/UserLevel';
 import { HttpStatus } from '@/types/HttpStatus';
+import { cacheControl } from '@/utils/constants';
 import Tools from '@/utils/tools';
 import {
   Body,
@@ -18,12 +19,14 @@ import {
   Patch,
   Post,
   Query,
+  SetHeader,
   ValidationPipe,
 } from 'next-api-decorators';
 
 class TagHandler {
   @Get()
   @ParseQueryGuard()
+  @SetHeader('Cache-Control', cacheControl)
   async findAll(
     @Query(ValidationPipe)
     query: TagListQueryDto,

@@ -6,6 +6,7 @@ import ParseQueryGuard from '@/middlewares/parse.query.middlewar';
 import CommentCreateDto from '@/server/comment/dtos/comment.create.dto';
 import CommentListQueryDto from '@/server/comment/dtos/comment.list.query.dto';
 import CommentUpdateDto from '@/server/comment/dtos/comment.update.dto';
+import { CommentStatus } from '@/server/comment/types/commentStatus';
 import { UserLevel } from '@/server/user/types/UserLevel';
 import { HttpStatus } from '@/types/HttpStatus';
 import Tools from '@/utils/tools';
@@ -24,7 +25,6 @@ import {
 // @ts-ignore
 import listToTree from 'list-to-tree-lite';
 import md5 from 'md5';
-import * as mongoose from 'mongoose';
 
 class CommentsHandler {
   @Get()
@@ -41,7 +41,7 @@ class CommentsHandler {
       take: limit,
       skip: (page - 1) * limit,
     });
-    const total = await prisma.comment.count({ where: rest });
+    const total = await prisma.comment.count({ where: conditions });
     return {
       list,
       total,
@@ -49,12 +49,15 @@ class CommentsHandler {
   }
 
   @Get('/:id')
-  async findByPostId(@Param('id') id: mongoose.Schema.Types.ObjectId) {
+  async findByPostId(@Param('id') id: string) {
     const condition = {
       postId: id,
-      status: { in: [1, 3] },
+      status: { in: [CommentStatus.PUBLISH, CommentStatus.BAN] },
     };
-    const result = prisma.comment.findMany({ where: condition, orderBy: { updatedAt: 'desc' } });
+    const result = await prisma.comment.findMany({
+      where: condition,
+      orderBy: { updatedAt: 'desc' },
+    });
     const list =
       result.length > 0
         ? listToTree(
@@ -62,8 +65,8 @@ class CommentsHandler {
               return {
                 ...item,
                 id: item.id.toString(),
-                comment_avatar: `https://cravatar.cn/avatar/${md5(
-                  item.comment_email.trim().toLowerCase(),
+                avatar: `https://cravatar.cn/avatar/${md5(
+                  item.email.trim().toLowerCase(),
                 )}?s=48&d=identicon`,
               };
             }),

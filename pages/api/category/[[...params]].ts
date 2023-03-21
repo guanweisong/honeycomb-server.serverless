@@ -7,6 +7,7 @@ import CategoryListQueryDto from '@/server/category/dtos/category.list.query.dto
 import CategoryUpdateDto from '@/server/category/dtos/category.update.dto';
 import { UserLevel } from '@/server/user/types/UserLevel';
 import { HttpStatus } from '@/types/HttpStatus';
+import { cacheControl } from '@/utils/constants';
 import Tools from '@/utils/tools';
 import {
   Body,
@@ -18,12 +19,14 @@ import {
   Patch,
   Post,
   Query,
+  SetHeader,
   ValidationPipe,
 } from 'next-api-decorators';
 
 class CategoriesHandler {
   @Get()
   @ParseQueryGuard()
+  @SetHeader('Cache-Control', cacheControl)
   async findAll(
     @Query(ValidationPipe)
     query: CategoryListQueryDto,

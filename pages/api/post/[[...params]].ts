@@ -7,6 +7,7 @@ import PostListQueryDto from '@/server/post/dtos/post.list.query.dto';
 import PostRandomListQueryDto from '@/server/post/dtos/post.random.list.query.dto';
 import { UserLevel } from '@/server/user/types/UserLevel';
 import { HttpStatus } from '@/types/HttpStatus';
+import { cacheControl } from '@/utils/constants';
 import Tools from '@/utils/tools';
 import {
   Body,
@@ -18,6 +19,7 @@ import {
   Patch,
   Post,
   Query,
+  SetHeader,
   ValidationPipe,
 } from 'next-api-decorators';
 const showdown = require('showdown');
@@ -27,6 +29,7 @@ const converter = new showdown.Converter();
 class PostsHandler {
   @Get()
   @ParseQueryGuard()
+  @SetHeader('Cache-Control', cacheControl)
   async findAll(
     @Query(ValidationPipe)
     query: PostListQueryDto,
@@ -165,6 +168,7 @@ class PostsHandler {
   }
 
   @Get('/:id')
+  @SetHeader('Cache-Control', cacheControl)
   async findOne(@Param('id') id: string) {
     const result = await prisma.post.findUnique({
       where: { id },

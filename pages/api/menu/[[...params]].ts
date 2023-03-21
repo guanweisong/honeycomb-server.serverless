@@ -4,10 +4,20 @@ import MenuUpdateDto from '@/server/menu/dtos/menu.update.dto';
 import { MenuType } from '@/server/menu/types/MenuType';
 import { UserLevel } from '@/server/user/types/UserLevel';
 import { HttpStatus } from '@/types/HttpStatus';
-import { Body, createHandler, Get, HttpCode, Patch, ValidationPipe } from 'next-api-decorators';
+import { cacheControl } from '@/utils/constants';
+import {
+  Body,
+  createHandler,
+  Get,
+  HttpCode,
+  Patch,
+  SetHeader,
+  ValidationPipe,
+} from 'next-api-decorators';
 
 class MenusHandler {
   @Get()
+  @SetHeader('Cache-Control', cacheControl)
   async findAll() {
     const list = await prisma.menu.findMany({
       orderBy: { power: 'asc' },
