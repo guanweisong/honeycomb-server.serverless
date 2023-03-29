@@ -240,6 +240,7 @@ class PostsHandler {
       select: {
         title: true,
         quoteContent: true,
+        id: true,
       },
     });
   }
