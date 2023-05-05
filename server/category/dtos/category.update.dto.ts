@@ -1,29 +1,29 @@
-import { MaxLength, IsString, IsOptional, IsEnum, IsMongoId } from 'class-validator';
 import { EnableType } from '@/types/EnableType';
+import { IsEnum, IsMongoId, IsOptional, IsString, MaxLength } from 'class-validator';
 
 class CategoryUpdateDto {
   @MaxLength(20, { message: '分类名称最大长度不可超过20' })
   @IsOptional()
   @IsString()
-  public category_title: string;
+  public title: string;
 
   @MaxLength(20, { message: '分类英文名称最大长度不可超过20' })
   @IsOptional()
   @IsString()
-  public category_title_en: string;
+  public titleEn: string;
 
   @IsOptional()
   @IsMongoId()
-  public category_parent: string;
+  public parent: string;
 
   @IsOptional()
   @MaxLength(200, { message: '分类描述最大长度不可超过200' })
   @IsString()
-  public category_description: string;
+  public description: string;
 
   @IsOptional()
   @IsEnum(EnableType, { message: '分类状态不合法' })
-  public category_status: EnableType;
+  public status: EnableType;
 }
 
 export default CategoryUpdateDto;

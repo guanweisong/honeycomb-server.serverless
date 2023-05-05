@@ -1,5 +1,5 @@
 export enum UserLevel {
-  ADMIN = 1,
-  EDITOR,
-  GUEST,
+  ADMIN = 'ADMIN',
+  EDITOR = 'EDITOR',
+  GUEST = 'GUEST',
 }

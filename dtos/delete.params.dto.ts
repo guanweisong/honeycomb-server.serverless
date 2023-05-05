@@ -1,5 +1,6 @@
-import { IsNotEmpty, IsArray } from 'class-validator';
 import { Type } from 'class-transformer';
+import { IsArray, IsNotEmpty } from 'class-validator';
+import 'reflect-metadata';
 
 class DeleteParamsDto {
   @IsArray({ message: 'ids必须为数组' })

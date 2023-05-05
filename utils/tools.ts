@@ -12,9 +12,9 @@ class Tools {
     for (const item in queries) {
       if (typeof queries[item] !== 'undefined') {
         if (queryArray.includes(item) && queries[item] !== '') {
-          conditions[item] = { $in: queries[item] };
+          conditions[item] = { in: queries[item] };
         } else {
-          conditions[item] = queries[item];
+          conditions[item] = { contains: queries[item] };
         }
       }
     }
@@ -48,13 +48,10 @@ class Tools {
     let lev = 0;
     const forFn = (arr: any, id: string, lev: number) => {
       for (const value of arr) {
-        if (
-          (value.category_parent === undefined && id === undefined) ||
-          value.category_parent === id
-        ) {
-          value.deep_path = lev;
+        if ((value.parent === null && id === undefined) || value.parent?.toString() === id) {
+          value.deepPath = lev;
           temp.push(value);
-          forFn(arr, value._id, lev + 1);
+          forFn(arr, value.id, lev + 1);
         }
       }
     };

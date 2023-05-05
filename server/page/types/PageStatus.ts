@@ -1,4 +1,5 @@
 export enum PageStatus {
-  PUBLISHED,
-  DRAFT,
+  TO_AUDIT = 'TO_AUDIT',
+  PUBLISHED = 'PUBLISHED',
+  DRAFT = 'DRAFT',
 }

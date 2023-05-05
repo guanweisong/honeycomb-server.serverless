@@ -1,6 +1,6 @@
 export enum CommentStatus {
-  TO_AUDIT,
-  PUBLISH,
-  RUBBISH,
-  BAN,
+  TO_AUDIT = 'TO_AUDIT',
+  PUBLISH = 'PUBLISH',
+  RUBBISH = 'RUBBISH',
+  BAN = 'BAN',
 }

@@ -1,0 +1,212 @@
+datasource db {
+  provider = "mongodb"
+  url      = env("MONGODB_URI")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+model User {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime   @default(now()) @db.Date
+  updatedAt DateTime   @updatedAt @db.Date
+  email     String     @unique()
+  level     UserLevel  @default(EDITOR)
+  name      String     @unique()
+  password  String
+  status    UserStatus @default(ENABLE)
+  pages     Page[]
+  posts     Post[]
+}
+
+model Category {
+  id          String         @id @default(auto()) @map("_id") @db.ObjectId
+  description String
+  parent      String?        @db.ObjectId
+  status      CategoryStatus @default(ENABLE)
+  title       String
+  titleEn     String
+  createdAt   DateTime       @default(now()) @db.Date
+  updatedAt   DateTime       @updatedAt @db.Date
+  posts       Post[]
+}
+
+model Comment {
+  id        String        @id @default(auto()) @map("_id") @db.ObjectId
+  userAgent String
+  author    String
+  content   String
+  email     String
+  ip        String
+  parentId  String?       @db.ObjectId
+  postId    String        @db.ObjectId
+  status    CommentStatus @default(PUBLISH)
+  createdAt DateTime      @default(now()) @db.Date
+  updatedAt DateTime      @updatedAt @db.Date
+}
+
+model Link {
+  id          String     @id @default(auto()) @map("_id") @db.ObjectId
+  url         String?    @unique()
+  name        String
+  description String
+  status      LinkStatus @default(ENABLE)
+  createdAt   DateTime   @default(now()) @db.Date
+  updatedAt   DateTime   @updatedAt @db.Date
+}
+
+model Media {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @db.Date
+  key       String
+  name      String
+  size      Int
+  type      String
+  url       String
+  updatedAt DateTime @updatedAt @db.Date
+  postCover Post[]   @relation("cover")
+}
+
+model Menu {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @db.Date
+  parent    String?  @db.ObjectId
+  power     Int
+  type      MenuType
+  updatedAt DateTime @updatedAt @db.Date
+}
+
+model Page {
+  id        String     @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime   @default(now()) @db.Date
+  authorId  String     @db.ObjectId
+  author    User       @relation(fields: [authorId], references: [id])
+  content   String
+  status    PageStatus @default(TO_AUDIT)
+  title     String
+  views     Int        @default(0)
+  updatedAt DateTime   @updatedAt @db.Date
+}
+
+model Post {
+  id               String            @id @default(auto()) @map("_id") @db.ObjectId
+  commentStatus    PostCommentStatus @default(ENABLE)
+  createdAt        DateTime          @default(now()) @db.Date
+  galleryLocation  String?
+  galleryStyleIds  String[]          @db.ObjectId
+  galleryStyles    Tag[]             @relation("galleryStyles", fields: [galleryStyleIds], references: [id])
+  galleryTime      DateTime?         @db.Date
+  movieActorIds    String[]          @db.ObjectId
+  movieActors      Tag[]             @relation("movieActors", fields: [movieActorIds], references: [id])
+  movieDirectorIds String[]          @db.ObjectId
+  movieDirectors   Tag[]             @relation("movieDirectors", fields: [movieDirectorIds], references: [id])
+  movieNameEn      String?
+  movieStyleIds    String[]          @db.ObjectId
+  movieStyles      Tag[]             @relation("movieStyles", fields: [movieStyleIds], references: [id])
+  movieTime        DateTime?         @db.Date
+  authorId         String            @db.ObjectId
+  author           User              @relation(fields: [authorId], references: [id])
+  categoryId       String            @db.ObjectId
+  category         Category          @relation(fields: [categoryId], references: [id])
+  content          String?
+  coverId          String?           @db.ObjectId
+  cover            Media?            @relation("cover", fields: [coverId], references: [id])
+  excerpt          String?
+  status           PostStatus        @default(TO_AUDIT)
+  title            String?
+  type             PostType          @default(ARTICLE)
+  views            Int               @default(0)
+  quoteAuthor      String?
+  quoteContent     String?
+  updatedAt        DateTime          @default(now()) @db.Date
+}
+
+model Setting {
+  id            String   @id @default(auto()) @map("_id") @db.ObjectId
+  siteCopyright String
+  siteName      String
+  siteRecordNo  String?
+  siteRecordUrl String?
+  siteSignature String
+  siteSubName   String
+  updatedAt     DateTime @updatedAt @db.Date
+}
+
+model Tag {
+  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt          DateTime @default(now()) @db.Date
+  name               String   @unique()
+  updatedAt          DateTime @updatedAt @db.Date
+  postIds            String[] @db.ObjectId
+  postMovieActors    Post[]   @relation("movieActors", fields: [postIds], references: [id])
+  postMovieDirectors Post[]   @relation("movieDirectors", fields: [postIds], references: [id])
+  postGalleryStyles  Post[]   @relation("galleryStyles", fields: [postIds], references: [id])
+  postMovieStyles    Post[]   @relation("movieStyles", fields: [postIds], references: [id])
+}
+
+model Token {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime @default(now()) @db.Date
+  content   String   @unique()
+  updatedAt DateTime @updatedAt @db.Date
+  userId    String   @db.ObjectId
+}
+
+enum UserLevel {
+  ADMIN
+  EDITOR
+  GUEST
+}
+
+enum UserStatus {
+  DELETED
+  ENABLE
+  DISABLE
+}
+
+enum CategoryStatus {
+  ENABLE
+  DISABLE
+}
+
+enum CommentStatus {
+  TO_AUDIT
+  PUBLISH
+  RUBBISH
+  BAN
+}
+
+enum LinkStatus {
+  ENABLE
+  DISABLE
+}
+
+enum PageStatus {
+  PUBLISHED
+  DRAFT
+  TO_AUDIT
+}
+
+enum PostStatus {
+  PUBLISHED
+  DRAFT
+  TO_AUDIT
+}
+
+enum PostType {
+  ARTICLE
+  MOVIE
+  PHOTOGRAPH
+  QUOTE
+}
+
+enum MenuType {
+  CATEGORY
+  PAGE
+}
+
+enum PostCommentStatus {
+  ENABLE
+  DISABLE
+}

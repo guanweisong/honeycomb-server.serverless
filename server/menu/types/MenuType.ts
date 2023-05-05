@@ -1,4 +1,4 @@
 export enum MenuType {
-  CATEGORY,
-  PAGE,
+  CATEGORY = 'CATEGORY',
+  PAGE = 'PAGE',
 }
