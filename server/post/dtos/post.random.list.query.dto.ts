@@ -1,6 +1,5 @@
-import * as mongoose from 'mongoose';
+import { Type } from 'class-transformer';
 import { IsNumber } from 'class-validator';
-import { Type, Transform } from 'class-transformer';
 
 class PostRandomListQueryDto {
   @IsNumber()
