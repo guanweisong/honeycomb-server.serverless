@@ -9,8 +9,8 @@ generator client {
 
 model User {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime   @default(now()) @db.Date
-  updatedAt DateTime   @updatedAt @db.Date
+  createdAt DateTime   @default(now()) @map("created_at") @db.Date
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Date
   email     String     @unique()
   level     UserLevel  @default(EDITOR)
   name      String     @unique()
@@ -27,8 +27,8 @@ model Category {
   status      CategoryStatus @default(ENABLE)
   title       String
   titleEn     String
-  createdAt   DateTime       @default(now()) @db.Date
-  updatedAt   DateTime       @updatedAt @db.Date
+  createdAt   DateTime       @default(now()) @map("created_at") @db.Date
+  updatedAt   DateTime       @updatedAt @map("updated_at") @db.Date
   posts       Post[]
 }
 
@@ -42,8 +42,8 @@ model Comment {
   parentId  String?       @db.ObjectId
   postId    String        @db.ObjectId
   status    CommentStatus @default(PUBLISH)
-  createdAt DateTime      @default(now()) @db.Date
-  updatedAt DateTime      @updatedAt @db.Date
+  createdAt DateTime      @default(now()) @map("created_at") @db.Date
+  updatedAt DateTime      @updatedAt @map("updated_at") @db.Date
 }
 
 model Link {
@@ -52,93 +52,93 @@ model Link {
   name        String
   description String
   status      LinkStatus @default(ENABLE)
-  createdAt   DateTime   @default(now()) @db.Date
-  updatedAt   DateTime   @updatedAt @db.Date
+  createdAt   DateTime   @default(now()) @map("created_at") @db.Date
+  updatedAt   DateTime   @updatedAt @map("updated_at") @db.Date
 }
 
 model Media {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now()) @db.Date
+  createdAt DateTime @default(now()) @map("created_at") @db.Date
   key       String
   name      String
   size      Int
   type      String
   url       String
-  updatedAt DateTime @updatedAt @db.Date
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Date
   postCover Post[]   @relation("cover")
 }
 
 model Menu {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now()) @db.Date
+  createdAt DateTime @default(now()) @map("created_at") @db.Date
   parent    String?  @db.ObjectId
   power     Int
   type      MenuType
-  updatedAt DateTime @updatedAt @db.Date
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Date
 }
 
 model Page {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime   @default(now()) @db.Date
-  authorId  String     @db.ObjectId
+  createdAt DateTime   @default(now()) @map("created_at") @db.Date
+  authorId  String     @db.ObjectId @map("author_id")
   author    User       @relation(fields: [authorId], references: [id])
   content   String
   status    PageStatus @default(TO_AUDIT)
   title     String
   views     Int        @default(0)
-  updatedAt DateTime   @updatedAt @db.Date
+  updatedAt DateTime   @updatedAt @map("updated_at") @db.Date
 }
 
 model Post {
   id               String            @id @default(auto()) @map("_id") @db.ObjectId
-  commentStatus    PostCommentStatus @default(ENABLE)
-  createdAt        DateTime          @default(now()) @db.Date
-  galleryLocation  String?
-  galleryStyleIds  String[]          @db.ObjectId
+  commentStatus    PostCommentStatus @default(ENABLE) @map("comment_status")
+  createdAt        DateTime          @default(now()) @map("created_at") @db.Date
+  galleryLocation  String?           @map("gallery_location")
+  galleryStyleIds  String[]          @map("gallery_style_ids") @db.ObjectId
   galleryStyles    Tag[]             @relation("galleryStyles", fields: [galleryStyleIds], references: [id])
   galleryTime      DateTime?         @db.Date
-  movieActorIds    String[]          @db.ObjectId
+  movieActorIds    String[]          @map("movie_actor_ids") @db.ObjectId
   movieActors      Tag[]             @relation("movieActors", fields: [movieActorIds], references: [id])
-  movieDirectorIds String[]          @db.ObjectId
+  movieDirectorIds String[]          @map("movie_director_ids") @db.ObjectId
   movieDirectors   Tag[]             @relation("movieDirectors", fields: [movieDirectorIds], references: [id])
-  movieNameEn      String?
-  movieStyleIds    String[]          @db.ObjectId
+  movieNameEn      String?           @map("movie_name_en")
+  movieStyleIds    String[]          @map("movie_style_ids") @db.ObjectId
   movieStyles      Tag[]             @relation("movieStyles", fields: [movieStyleIds], references: [id])
-  movieTime        DateTime?         @db.Date
-  authorId         String            @db.ObjectId
+  movieTime        DateTime?         @map("movie_time") @db.Date
+  authorId         String            @map("author_id") @db.ObjectId
   author           User              @relation(fields: [authorId], references: [id])
-  categoryId       String            @db.ObjectId
+  categoryId       String            @map("category_id") @db.ObjectId
   category         Category          @relation(fields: [categoryId], references: [id])
   content          String?
-  coverId          String?           @db.ObjectId
+  coverId          String?           @map("cover_id") @db.ObjectId
   cover            Media?            @relation("cover", fields: [coverId], references: [id])
   excerpt          String?
   status           PostStatus        @default(TO_AUDIT)
   title            String?
   type             PostType          @default(ARTICLE)
   views            Int               @default(0)
-  quoteAuthor      String?
-  quoteContent     String?
-  updatedAt        DateTime          @default(now()) @db.Date
+  quoteAuthor      String?           @map("quote_author")
+  quoteContent     String?           @map("quote_content")
+  updatedAt        DateTime          @updatedAt @map("updated_at") @db.Date
 }
 
 model Setting {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  siteCopyright String
-  siteName      String
-  siteRecordNo  String?
-  siteRecordUrl String?
-  siteSignature String
-  siteSubName   String
-  updatedAt     DateTime @updatedAt @db.Date
+  siteCopyright String   @map("site_copyright")
+  siteName      String   @map("site_name")
+  siteRecordNo  String?  @map("site_record_no")
+  siteRecordUrl String?  @map("site_record_url")
+  siteSignature String   @map("site_signature")
+  siteSubName   String   @map("site_sub_name")
+  updatedAt     DateTime @updatedAt @map("updated_at") @db.Date
 }
 
 model Tag {
   id                 String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt          DateTime @default(now()) @db.Date
+  createdAt          DateTime @default(now()) @map("created_at") @db.Date
   name               String   @unique()
-  updatedAt          DateTime @updatedAt @db.Date
-  postIds            String[] @db.ObjectId
+  updatedAt          DateTime @updatedAt @map("updated_at") @db.Date
+  postIds            String[] @map("post_ids") @db.ObjectId
   postMovieActors    Post[]   @relation("movieActors", fields: [postIds], references: [id])
   postMovieDirectors Post[]   @relation("movieDirectors", fields: [postIds], references: [id])
   postGalleryStyles  Post[]   @relation("galleryStyles", fields: [postIds], references: [id])
@@ -147,9 +147,9 @@ model Tag {
 
 model Token {
   id        String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt DateTime @default(now()) @db.Date
+  createdAt DateTime @default(now()) @map("created_at") @db.Date
   content   String   @unique()
-  updatedAt DateTime @updatedAt @db.Date
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Date
   userId    String   @db.ObjectId
 }
 
