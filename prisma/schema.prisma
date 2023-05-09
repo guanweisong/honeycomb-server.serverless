@@ -34,13 +34,13 @@ model Category {
 
 model Comment {
   id        String        @id @default(auto()) @map("_id") @db.ObjectId
-  userAgent String
+  userAgent String        @map("user_agent")
   author    String
   content   String
   email     String
   ip        String
-  parentId  String?       @db.ObjectId
-  postId    String        @db.ObjectId
+  parentId  String?       @map("parent_id") @db.ObjectId
+  postId    String        @map("post_id") @db.ObjectId
   status    CommentStatus @default(PUBLISH)
   createdAt DateTime      @default(now()) @map("created_at") @db.Date
   updatedAt DateTime      @updatedAt @map("updated_at") @db.Date
