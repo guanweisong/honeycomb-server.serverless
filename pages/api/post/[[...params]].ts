@@ -231,12 +231,21 @@ class PostsHandler {
   @ParseQueryGuard()
   async random(@Param('id') id: string, @Query(ValidationPipe) query: PostRandomListQueryDto) {
     const { number } = query;
-    const count = await prisma.post.count();
-    const skip = Math.max(0, Math.floor(Math.random() * count) - number);
+    const allIds = await prisma.post
+      .findMany({ where: { categoryId: id }, select: { id: true } })
+      .then((result) => result.map((item) => item.id));
+    const randomArr = (arr: string[], num: number) => {
+      let newArr = [];
+      for (let i = 0; i < num; i++) {
+        let temp = Math.floor(Math.random() * arr.length);
+        newArr.push(arr[temp]);
+        arr.splice(temp, 1);
+      }
+      return newArr;
+    };
+    const randomIds = randomArr(allIds, number);
     return prisma.post.findMany({
-      where: { categoryId: id },
-      take: number,
-      skip: skip,
+      where: { id: { in: randomIds } },
       select: {
         title: true,
         quoteContent: true,
