@@ -80,7 +80,7 @@ model Menu {
 model Page {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime   @default(now()) @map("created_at") @db.Date
-  authorId  String     @db.ObjectId @map("author_id")
+  authorId  String     @map("author_id") @db.ObjectId
   author    User       @relation(fields: [authorId], references: [id])
   content   String
   status    PageStatus @default(TO_AUDIT)
@@ -96,7 +96,7 @@ model Post {
   galleryLocation  String?           @map("gallery_location")
   galleryStyleIds  String[]          @map("gallery_style_ids") @db.ObjectId
   galleryStyles    Tag[]             @relation("galleryStyles", fields: [galleryStyleIds], references: [id])
-  galleryTime      DateTime?         @db.Date
+  galleryTime      DateTime?         @map("gallery_time") @db.Date
   movieActorIds    String[]          @map("movie_actor_ids") @db.ObjectId
   movieActors      Tag[]             @relation("movieActors", fields: [movieActorIds], references: [id])
   movieDirectorIds String[]          @map("movie_director_ids") @db.ObjectId
@@ -124,12 +124,12 @@ model Post {
 
 model Setting {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  siteCopyright String   @map("site_copyright")
+  siteCopyright String?  @map("site_copyright")
   siteName      String   @map("site_name")
   siteRecordNo  String?  @map("site_record_no")
   siteRecordUrl String?  @map("site_record_url")
-  siteSignature String   @map("site_signature")
-  siteSubName   String   @map("site_sub_name")
+  siteSignature String?  @map("site_signature")
+  siteSubName   String?  @map("site_sub_name")
   updatedAt     DateTime @updatedAt @map("updated_at") @db.Date
 }
 
