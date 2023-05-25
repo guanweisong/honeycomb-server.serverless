@@ -8,5 +8,5 @@ export async function POST(request: NextRequest) {
   if (token) {
     await prisma.token.delete({ where: { content: token } });
   }
-  ResponseHandler.Create({ OK: true });
+  return ResponseHandler.Create({ isOk: true });
 }

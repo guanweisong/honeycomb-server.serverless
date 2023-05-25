@@ -6,7 +6,7 @@ import { UserLevel } from '.prisma/client';
 export async function GET(request: NextRequest) {
   const auth = await validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR, UserLevel.GUEST]);
   if (!auth.isOk) {
-    return ResponseHandler.Forbidden({ message: auth.message });
+    return ResponseHandler.Query({});
   } else {
     return ResponseHandler.Query(auth.data);
   }
