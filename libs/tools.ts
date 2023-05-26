@@ -1,9 +1,9 @@
 class Tools {
   /**
-   * 根据controller的queries参数拼接mongoose的查询条件
+   * 根据controller的queries参数拼接prisma的查询条件
    * @param {*} queries controller的参数
    * @param {*} queryArray 允许查询的参数名数组
-   * @return {*} conditions 拼接完成的mongoose查询条件
+   * @return {*} conditions 拼接完成prisma的查询条件
    */
   static getFindConditionsByQueries(queries: any, queryArray: string[]) {
     const conditions = {} as any;
