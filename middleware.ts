@@ -1,20 +1,16 @@
 import type { NextRequest } from 'next/server';
 import { NextResponse } from 'next/server';
+import Cors from '@/libs/cors';
 
-export default async function middleware(request: NextRequest) {
-  const requestHeaders = new Headers(request.headers);
-  const response = NextResponse.next({
-    request: {
-      headers: requestHeaders,
+export default async function middleware(req: NextRequest) {
+  const res = NextResponse.next();
+
+  console.log('request', req.url, req.body);
+
+  return Cors(req, res, {
+    credentials: true,
+    origin: (origin, req) => {
+      return origin!;
     },
   });
-
-  const origin = requestHeaders.get('origin');
-  if (origin) {
-    response.headers.set('Access-Control-Allow-Origin', origin);
-    response.headers.set('Access-Control-Allow-Credentials', 'true');
-    response.headers.set('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE,PATCH, OPTIONS');
-  }
-
-  return response;
 }
