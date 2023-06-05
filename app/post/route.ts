@@ -68,30 +68,6 @@ export async function GET(request: NextRequest) {
       take: limit,
       skip: (page - 1) * limit,
       include: {
-        movieActors: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        movieDirectors: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        galleryStyles: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        movieStyles: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
         category: {
           select: {
             id: true,

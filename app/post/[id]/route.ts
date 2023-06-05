@@ -5,6 +5,7 @@ const showdown = require('showdown');
 import { PostUpdateSchema } from '@/app/post/schemas/post.update.schema';
 import { UserLevel } from '.prisma/client';
 import { validateAuth } from '@/libs/validateAuth';
+import { getRelationTags } from '@/libs/getRelationTags';
 
 const converter = new showdown.Converter();
 
@@ -13,30 +14,6 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   const result = await prisma.post.findUnique({
     where: { id },
     include: {
-      movieActors: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      movieDirectors: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      galleryStyles: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      movieStyles: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
       category: {
         select: {
           id: true,
@@ -57,10 +34,22 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       },
     },
   });
-  if (result) {
+  const [movieActors, movieDirectors, movieStyles, galleryStyles] = await Promise.all([
+    getRelationTags(result?.movieActorIds),
+    getRelationTags(result?.movieDirectorIds),
+    getRelationTags(result?.movieStyleIds),
+    getRelationTags(result?.galleryStyleIds),
+  ]);
+  if (result?.content) {
     result.content = converter.makeHtml(result.content);
   }
-  return ResponseHandler.Query(result);
+  return ResponseHandler.Query({
+    ...result,
+    movieActors,
+    movieDirectors,
+    movieStyles,
+    galleryStyles,
+  });
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {

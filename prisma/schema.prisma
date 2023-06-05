@@ -95,15 +95,11 @@ model Post {
   createdAt        DateTime          @default(now()) @map("created_at") @db.Date
   galleryLocation  String?           @map("gallery_location")
   galleryStyleIds  String[]          @map("gallery_style_ids") @db.ObjectId
-  galleryStyles    Tag[]             @relation("galleryStyles", fields: [galleryStyleIds], references: [id])
   galleryTime      DateTime?         @map("gallery_time") @db.Date
   movieActorIds    String[]          @map("movie_actor_ids") @db.ObjectId
-  movieActors      Tag[]             @relation("movieActors", fields: [movieActorIds], references: [id])
   movieDirectorIds String[]          @map("movie_director_ids") @db.ObjectId
-  movieDirectors   Tag[]             @relation("movieDirectors", fields: [movieDirectorIds], references: [id])
   movieNameEn      String?           @map("movie_name_en")
   movieStyleIds    String[]          @map("movie_style_ids") @db.ObjectId
-  movieStyles      Tag[]             @relation("movieStyles", fields: [movieStyleIds], references: [id])
   movieTime        DateTime?         @map("movie_time") @db.Date
   authorId         String            @map("author_id") @db.ObjectId
   author           User              @relation(fields: [authorId], references: [id])
@@ -138,11 +134,6 @@ model Tag {
   createdAt          DateTime @default(now()) @map("created_at") @db.Date
   name               String   @unique()
   updatedAt          DateTime @updatedAt @map("updated_at") @db.Date
-  postIds            String[] @map("post_ids") @db.ObjectId
-  postMovieActors    Post[]   @relation("movieActors", fields: [postIds], references: [id])
-  postMovieDirectors Post[]   @relation("movieDirectors", fields: [postIds], references: [id])
-  postGalleryStyles  Post[]   @relation("galleryStyles", fields: [postIds], references: [id])
-  postMovieStyles    Post[]   @relation("movieStyles", fields: [postIds], references: [id])
 }
 
 model Token {
