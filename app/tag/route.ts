@@ -9,6 +9,8 @@ import { UserLevel } from '.prisma/client';
 import { validateAuth } from '@/libs/validateAuth';
 import { getQueryParams } from '@/libs/getQueryParams';
 
+export const runtime = 'edge';
+
 export async function GET(request: NextRequest) {
   const validate = TagListQuerySchema.safeParse(getQueryParams(request));
   if (validate.success) {
