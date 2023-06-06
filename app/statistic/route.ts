@@ -24,7 +24,7 @@ export interface StatisticsType {
 }
 
 export async function GET(request: NextRequest) {
-  const auth = await validateAuth(request, [UserLevel.ADMIN]);
+  const auth = await validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR, UserLevel.GUEST]);
   if (!auth.isOk) {
     return ResponseHandler.Forbidden({ message: auth.message });
   }
