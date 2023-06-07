@@ -5,11 +5,11 @@ import prisma from '@/libs/prisma';
 import { DeleteBatchSchema } from '@/schemas/delete.batch.schema';
 import { MediaListQuerySchema } from '@/app/media/schemas/media.list.query.schema';
 import Cos from '@/libs/cos';
-import { MediaCreateSchema } from '@/app/media/schemas/media.create.schema';
 import moment from 'moment';
 import { UserLevel } from '.prisma/client';
 import { validateAuth } from '@/libs/validateAuth';
 import { getQueryParams } from '@/libs/getQueryParams';
+import { arraybufferToBuffer } from '@/libs/arraybufferToBuffer';
 
 export async function GET(request: NextRequest) {
   const auth = await validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR, UserLevel.GUEST]);
@@ -39,28 +39,26 @@ export async function POST(request: NextRequest) {
   if (!auth.isOk) {
     return ResponseHandler.Forbidden({ message: auth.message });
   }
-  // const form = new formidable.IncomingForm();
-  // const data = await form.parse(request, (err, fields, files) => fields);
   const formData = await request.formData();
-  const file = formData.get('file');
-  // return ResponseHandler.Create({ file: file.mimetype });
-  // const data = {} as any;
-  // data.media_name = file.originalname;
-  // data.media_size = file.size;
-  // data.media_type = file.mimetype;
-  // const keyContent = moment().format('YYYY/MM/DD/HHmmssSSS');
-  // const filenameArray = file.originalname.split('.');
-  // const keySuffix = filenameArray[filenameArray.length - 1];
-  // const cosResult = await Cos.putObject({
-  //   Bucket: process.env.COS_BUCKET!,
-  //   Region: process.env.COS_REGION!,
-  //   Key: `${keyContent}.${keySuffix}`,
-  //   Body: file.buffer,
-  // });
-  // data.media_url = cosResult.Location;
-  // data.media_key = `${keyContent}.${keySuffix}`;
-  // const result = await prisma.media.create({ data });
-  // return ResponseHandler.Create(result);
+  const file = formData.get('file') as File;
+  const data = {} as any;
+  data.name = file.name;
+  data.size = file.size;
+  data.type = file.type;
+  const keyContent = moment().format('YYYY/MM/DD/HHmmssSSS');
+  const filenameArray = file.name.split('.');
+  const keySuffix = filenameArray[filenameArray.length - 1];
+  const fileBuffer = await file.arrayBuffer();
+  const cosResult = await Cos.putObject({
+    Bucket: process.env.COS_BUCKET!,
+    Region: process.env.COS_REGION!,
+    Key: `${keyContent}.${keySuffix}`,
+    Body: arraybufferToBuffer(fileBuffer),
+  });
+  data.url = cosResult.Location;
+  data.key = `${keyContent}.${keySuffix}`;
+  const result = await prisma.media.create({ data });
+  return ResponseHandler.Create(result);
 }
 
 export async function DELETE(request: NextRequest) {
