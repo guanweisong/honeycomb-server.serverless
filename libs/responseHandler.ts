@@ -16,7 +16,7 @@ export default class ResponseHandler {
   };
 
   static Delete = () => {
-    return NextResponse.json({ isOk: true }, { status: HttpStatus.NO_CONTENT });
+    return new Response(null, { status: HttpStatus.NO_CONTENT });
   };
 
   static Forbidden = (result: unknown) => {
