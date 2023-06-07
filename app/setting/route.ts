@@ -1,7 +1,7 @@
 import prisma from '@/libs/prisma';
-import { NextResponse } from 'next/server';
+import ResponseHandler from '@/libs/responseHandler';
 
 export async function GET() {
   const result = await prisma.setting.findFirst();
-  return NextResponse.json(result);
+  return ResponseHandler.Query(result);
 }
