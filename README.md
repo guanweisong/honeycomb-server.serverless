@@ -1,5 +1,7 @@
 ### 基于Next.js的Serverless能力实现的仿Wordpress功能的纯Restfull Api服务
 
+> 介绍见[链接](https://github.com/guanweisong/honeycomb-intro/blob/master/README.md)
+
 ## 1、云服务依赖：
 - [MongoDB Atlas](https://www.mongodb.com/atlas/database)
 - [腾讯云COS](https://cloud.tencent.com/product/cos)
