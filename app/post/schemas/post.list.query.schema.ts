@@ -9,8 +9,8 @@ import { z } from 'zod';
 export const PostListQuerySchema = PaginationQuerySchema.extend({
   title: TitleSchema.optional(),
   content: ContentSchema.optional(),
-  status: StatusSchema.array().optional(),
-  type: TypeSchema.array().optional(),
+  status: z.union([StatusSchema.array(), StatusSchema]).optional(),
+  type: z.union([TypeSchema.array(), TypeSchema]).optional(),
   categoryId: IdSchema.optional(),
   tagName: z.string().optional(),
   userName: z.string().optional(),

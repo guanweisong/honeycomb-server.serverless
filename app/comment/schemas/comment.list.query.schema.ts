@@ -7,7 +7,7 @@ import { AuthorSchema } from '@/app/comment/schemas/fields/author.schema';
 
 export const CommentListQuerySchema = PaginationQuerySchema.extend({
   content: ContentSchema.optional(),
-  status: StatusSchema.array().optional(),
+  status: z.union([StatusSchema.array(), StatusSchema]).optional(),
   email: EmailSchema.optional(),
   ip: z.string().ip().optional(),
   author: AuthorSchema.optional(),
