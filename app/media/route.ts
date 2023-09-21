@@ -61,7 +61,7 @@ export async function POST(request: NextRequest) {
     data.width = dimensions.width;
     data.height = dimensions.height;
   }
-  data.url = cosResult.Location;
+  data.url = `https://${cosResult.Location}`;
   data.key = `${keyContent}.${keySuffix}`;
   const result = await prisma.media.create({ data });
   return ResponseHandler.Create(result);
