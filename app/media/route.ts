@@ -10,6 +10,7 @@ import { UserLevel } from '.prisma/client';
 import { validateAuth } from '@/libs/validateAuth';
 import { getQueryParams } from '@/libs/getQueryParams';
 import { arraybufferToBuffer } from '@/libs/arraybufferToBuffer';
+import sizeOf from 'image-size';
 
 export async function GET(request: NextRequest) {
   const auth = await validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR, UserLevel.GUEST]);
@@ -55,6 +56,11 @@ export async function POST(request: NextRequest) {
     Key: `${keyContent}.${keySuffix}`,
     Body: arraybufferToBuffer(fileBuffer),
   });
+  if (file.type.startsWith('image')) {
+    const dimensions = sizeOf(arraybufferToBuffer(fileBuffer));
+    data.width = dimensions.width;
+    data.height = dimensions.height;
+  }
   data.url = cosResult.Location;
   data.key = `${keyContent}.${keySuffix}`;
   const result = await prisma.media.create({ data });

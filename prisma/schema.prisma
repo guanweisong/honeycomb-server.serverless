@@ -48,7 +48,7 @@ model Comment {
 
 model Link {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
-  url         String?    @unique()
+  url         String     @unique()
   name        String
   description String
   status      LinkStatus @default(ENABLE)
@@ -66,6 +66,8 @@ model Media {
   url       String
   updatedAt DateTime @updatedAt @map("updated_at") @db.Date
   postCover Post[]   @relation("cover")
+  height    Int?
+  width     Int?
 }
 
 model Menu {

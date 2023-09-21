@@ -12,6 +12,7 @@
     "@prisma/client": "^4.10.1",
     "axios": "^1.2.1",
     "cos-nodejs-sdk-v5": "^2.11.18",
+    "image-size": "^1.0.2",
     "list-to-tree-lite": "^0.1.0",
     "md5": "^2.3.0",
     "moment": "^2.29.4",
