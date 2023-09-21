@@ -40,10 +40,11 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     getRelationTags(result?.galleryStyleIds),
   ]);
 
-  const imageUrls: string[] = getAllImageLinkFormMarkdown(result?.content);
+  let imageUrls: string[] = getAllImageLinkFormMarkdown(result?.content);
+  imageUrls = imageUrls.map((item) => item.split('//')[1]);
   let imagesInContent: Media[] = [];
   if (imageUrls.length) {
-    imagesInContent = await prisma.media.findMany();
+    imagesInContent = await prisma.media.findMany({ where: { url: { in: imageUrls } } });
   }
 
   return ResponseHandler.Query({
