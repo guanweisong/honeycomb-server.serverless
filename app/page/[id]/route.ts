@@ -1,12 +1,10 @@
 import prisma from '@/libs/prisma';
 import ResponseHandler from '@/libs/responseHandler';
 import { NextRequest } from 'next/server';
-const showdown = require('showdown');
 import { PageUpdateSchema } from '@/app/page/schemas/page.update.schema';
-import { UserLevel } from '.prisma/client';
+import { Media, UserLevel } from '.prisma/client';
 import { validateAuth } from '@/libs/validateAuth';
-
-const converter = new showdown.Converter();
+import { getAllImageLinkFormMarkdown } from '@/libs/getAllImageLinkFormMarkdown';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const id = params.id;
@@ -21,10 +19,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       },
     },
   });
-  if (result) {
-    result.content = converter.makeHtml(result.content);
+  const imageUrls: string[] = getAllImageLinkFormMarkdown(result?.content);
+  let imagesInContent: Media[] = [];
+  if (imageUrls.length) {
+    imagesInContent = await prisma.media.findMany();
   }
-  return ResponseHandler.Query(result);
+  return ResponseHandler.Query({ ...result, imagesInContent });
 }
 
 export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {

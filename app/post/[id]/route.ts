@@ -1,13 +1,11 @@
 import prisma from '@/libs/prisma';
 import ResponseHandler from '@/libs/responseHandler';
 import { NextRequest } from 'next/server';
-const showdown = require('showdown');
 import { PostUpdateSchema } from '@/app/post/schemas/post.update.schema';
-import { UserLevel } from '.prisma/client';
+import { Media, UserLevel } from '.prisma/client';
 import { validateAuth } from '@/libs/validateAuth';
 import { getRelationTags } from '@/libs/getRelationTags';
-
-const converter = new showdown.Converter();
+import { getAllImageLinkFormMarkdown } from '@/libs/getAllImageLinkFormMarkdown';
 
 export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
   const id = params.id;
@@ -34,21 +32,27 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       },
     },
   });
+
   const [movieActors, movieDirectors, movieStyles, galleryStyles] = await Promise.all([
     getRelationTags(result?.movieActorIds),
     getRelationTags(result?.movieDirectorIds),
     getRelationTags(result?.movieStyleIds),
     getRelationTags(result?.galleryStyleIds),
   ]);
-  if (result?.content) {
-    result.content = converter.makeHtml(result.content);
+
+  const imageUrls: string[] = getAllImageLinkFormMarkdown(result?.content);
+  let imagesInContent: Media[] = [];
+  if (imageUrls.length) {
+    imagesInContent = await prisma.media.findMany();
   }
+
   return ResponseHandler.Query({
     ...result,
     movieActors,
     movieDirectors,
     movieStyles,
     galleryStyles,
+    imagesInContent,
   });
 }
 

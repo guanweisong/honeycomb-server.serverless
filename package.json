@@ -11,6 +11,7 @@
   "dependencies": {
     "@prisma/client": "^4.10.1",
     "axios": "^1.2.1",
+    "commonmark": "^0.30.0",
     "cos-nodejs-sdk-v5": "^2.11.18",
     "image-size": "^1.0.2",
     "list-to-tree-lite": "^0.1.0",
@@ -22,11 +23,11 @@
     "query-string": "^8.1.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
-    "showdown": "^2.1.0",
     "zod": "^3.21.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.7",
+    "@types/commonmark": "^0.27.7",
     "@types/md5": "^2.3.2",
     "@types/node": "18.11.18",
     "@types/react": "^18.0.26",
