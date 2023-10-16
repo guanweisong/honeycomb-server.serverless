@@ -50,6 +50,7 @@ model Link {
   id          String     @id @default(auto()) @map("_id") @db.ObjectId
   url         String     @unique()
   name        String
+  logo        String
   description String
   status      LinkStatus @default(ENABLE)
   createdAt   DateTime   @default(now()) @map("created_at") @db.Date

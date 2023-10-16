@@ -7,6 +7,7 @@ import { UrlSchema } from '@/schemas/fields/url.schema';
 export const LinkCreateSchema = z.object({
   name: NameSchema,
   url: UrlSchema,
+  logo: UrlSchema,
   description: DescriptionSchema,
   status: StatusSchema.optional(),
 });
