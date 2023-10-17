@@ -49,7 +49,6 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
   const data = await request.clone().json();
   const validate = CommentUpdateSchema.safeParse(data);
   if (validate.success) {
-    console.log(111, validate.data);
     const result = await prisma.comment.update({ where: { id }, data: validate.data });
     return ResponseHandler.Update(result);
   } else {

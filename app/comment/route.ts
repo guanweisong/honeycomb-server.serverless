@@ -30,17 +30,18 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const captcha = await validateCaptcha(request);
-  if (!captcha.isOk) {
-    return ResponseHandler.Forbidden({ message: captcha.message });
+  const captchaValidate = await validateCaptcha(request);
+  if (!captchaValidate.isOk) {
+    return ResponseHandler.Forbidden({ message: captchaValidate.message });
   }
   const data = await request.clone().json();
   const validate = CommentCreateSchema.safeParse(data);
   if (validate.success) {
+    const { captcha, ...rest } = validate.data;
     const result = await prisma.comment.create({
       data: {
-        ...validate.data,
-        ip: request.ip!,
+        ...rest,
+        ip: request.ip || '127.0.0.1',
         status: CommentStatus.PUBLISH,
         userAgent: request.headers.get('user-agent')!,
       },
