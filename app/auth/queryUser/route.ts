@@ -10,5 +10,8 @@ export async function GET(request: NextRequest) {
     async (userInfo) => {
       return ResponseHandler.Query(userInfo);
     },
+    () => {
+      return ResponseHandler.Query({});
+    },
   );
 }
