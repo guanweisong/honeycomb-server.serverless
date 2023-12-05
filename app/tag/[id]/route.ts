@@ -4,19 +4,17 @@ import { NextRequest } from 'next/server';
 import { TagUpdateSchema } from '@/app/tag/schemas/tag.update.schema';
 import { UserLevel } from '.prisma/client';
 import { validateAuth } from '@/libs/validateAuth';
+import { validateParams } from '@/libs/validateParams';
+import { errorHandle } from '@/libs/errorHandle';
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-  const auth = await validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR]);
-  if (!auth.isOk) {
-    return ResponseHandler.Forbidden({ message: auth.message });
-  }
-  const id = params.id;
-  const data = await request.clone().json();
-  const validate = TagUpdateSchema.safeParse(data);
-  if (validate.success) {
-    const result = await prisma.tag.update({ where: { id }, data: validate.data });
-    return ResponseHandler.Update(result);
-  } else {
-    return ResponseHandler.ValidateError(validate.error);
-  }
+export async function PATCH(request: NextRequest, { params: { id } }: { params: { id: string } }) {
+  return validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR], async () => {
+    const params = await request.clone().json();
+    return validateParams(TagUpdateSchema, params, async (data) => {
+      return errorHandle(async () => {
+        const result = await prisma.tag.update({ where: { id }, data });
+        return ResponseHandler.Update(result);
+      });
+    });
+  });
 }

@@ -1,13 +1,14 @@
 import { NextRequest } from 'next/server';
 import ResponseHandler from '@/libs/responseHandler';
-import { validateAuth } from '@/libs/validateAuth';
 import { UserLevel } from '.prisma/client';
+import { validateAuth } from '@/libs/validateAuth';
 
 export async function GET(request: NextRequest) {
-  const auth = await validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR, UserLevel.GUEST]);
-  if (!auth.isOk) {
-    return ResponseHandler.Query({});
-  } else {
-    return ResponseHandler.Query(auth.data);
-  }
+  return validateAuth(
+    request,
+    [UserLevel.ADMIN, UserLevel.EDITOR, UserLevel.GUEST],
+    async (userInfo) => {
+      return ResponseHandler.Query(userInfo);
+    },
+  );
 }

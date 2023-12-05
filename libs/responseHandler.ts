@@ -29,4 +29,8 @@ export default class ResponseHandler {
       { status: HttpStatus.BAD_REQUEST },
     );
   };
+
+  static Error = () => {
+    return NextResponse.json('服务器内部错误', { status: HttpStatus.INTERNAL_SERVER_ERROR });
+  };
 }

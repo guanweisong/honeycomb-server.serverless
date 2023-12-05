@@ -6,63 +6,58 @@ import { UserListQuerySchema } from '@/app/user/schemas/user.list.query.schema';
 import ResponseHandler from '@/libs/responseHandler';
 import { UserCreateSchema } from '@/app/user/schemas/user.create.schema';
 import { DeleteBatchSchema } from '@/schemas/delete.batch.schema';
-import { validateAuth } from '@/libs/validateAuth';
 import { getQueryParams } from '@/libs/getQueryParams';
+import { validateParams } from '@/libs/validateParams';
+import { validateAuth } from '@/libs/validateAuth';
+import { errorHandle } from '@/libs/errorHandle';
 
 export async function GET(request: NextRequest) {
-  const validate = UserListQuerySchema.safeParse(getQueryParams(request));
-  if (validate.success) {
-    const params = validate.data;
-    const { page, limit, sortField, sortOrder, ...rest } = params;
-    const conditions = Tools.getFindConditionsByQueries(rest, ['level', 'status']);
-    const list = await prisma.user.findMany({
-      where: conditions,
-      orderBy: { [sortField]: sortOrder },
-      take: limit,
-      skip: (page - 1) * limit,
+  // @ts-ignore
+  return validateParams(UserListQuerySchema, getQueryParams(request), async (data) => {
+    return errorHandle(async () => {
+      const { page, limit, sortField, sortOrder, ...rest } = data;
+      const conditions = Tools.getFindConditionsByQueries(rest, ['level', 'status']);
+      const list = await prisma.user.findMany({
+        where: conditions,
+        orderBy: { [sortField]: sortOrder },
+        take: limit,
+        skip: (page - 1) * limit,
+      });
+      const total = await prisma.user.count({ where: conditions });
+      const result = {
+        list: list.map((item) => {
+          const { password, ...rest } = item;
+          return rest;
+        }),
+        total,
+      };
+      return ResponseHandler.Query(result);
     });
-    const total = await prisma.user.count({ where: conditions });
-    const result = {
-      list: list.map((item) => {
-        const { password, ...rest } = item;
-        return rest;
-      }),
-      total,
-    };
-    return ResponseHandler.Query(result);
-  } else {
-    return ResponseHandler.ValidateError(validate.error);
-  }
+  });
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await validateAuth(request, [UserLevel.ADMIN]);
-  if (!auth.isOk) {
-    return ResponseHandler.Forbidden({ message: auth.message });
-  }
-  const data = await request.clone().json();
-  const validate = UserCreateSchema.safeParse(data);
-  if (validate.success) {
-    const result = await prisma.user.create({ data: validate.data });
-    return ResponseHandler.Create(result);
-  } else {
-    return ResponseHandler.ValidateError(validate.error);
-  }
+  return validateAuth(request, [UserLevel.ADMIN], async () => {
+    const params = await request.clone().json();
+    return validateParams(UserCreateSchema, params, async (data) => {
+      return errorHandle(async () => {
+        const result = await prisma.user.create({ data });
+        return ResponseHandler.Create(result);
+      });
+    });
+  });
 }
 
 export async function DELETE(request: NextRequest) {
-  const auth = await validateAuth(request, [UserLevel.ADMIN]);
-  if (!auth.isOk) {
-    return ResponseHandler.Forbidden({ message: auth.message });
-  }
-  const validate = DeleteBatchSchema.safeParse(getQueryParams(request));
-  if (validate.success) {
-    const result = await prisma.user.updateMany({
-      where: { id: { in: validate.data.ids } },
-      data: { status: UserStatus.DELETED },
+  return validateAuth(request, [UserLevel.ADMIN], async () => {
+    return validateParams(DeleteBatchSchema, getQueryParams(request), async (data) => {
+      return errorHandle(async () => {
+        const result = await prisma.user.updateMany({
+          where: { id: { in: data.ids } },
+          data: { status: UserStatus.DELETED },
+        });
+        return ResponseHandler.Delete();
+      });
     });
-    return ResponseHandler.Delete();
-  } else {
-    return ResponseHandler.ValidateError(validate.error);
-  }
+  });
 }

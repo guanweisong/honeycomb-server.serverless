@@ -1,14 +1,12 @@
 import { NextRequest } from 'next/server';
 import axios from 'axios';
+import ResponseHandler from '@/libs/responseHandler';
 
-export const validateCaptcha = async (request: NextRequest) => {
+export const validateCaptcha = async (request: NextRequest, onSuccess: () => void) => {
   const data = await request.clone().json();
   const { captcha } = data;
   if (!captcha) {
-    return {
-      isOk: false,
-      message: '请输入验证码',
-    };
+    return ResponseHandler.Forbidden({ message: '请输入验证码' });
   }
   const result = await axios.request({
     url: 'https://ssl.captcha.qq.com/ticket/verify',
@@ -22,13 +20,8 @@ export const validateCaptcha = async (request: NextRequest) => {
   });
   // @ts-ignore
   if (result.status === 200 && result.data.response === '1') {
-    return {
-      isOk: true,
-    };
+    onSuccess();
   } else {
-    return {
-      isOk: false,
-      message: '验证码不正确',
-    };
+    return ResponseHandler.Forbidden({ message: '验证码不正确' });
   }
 };

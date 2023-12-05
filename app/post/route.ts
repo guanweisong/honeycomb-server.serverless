@@ -6,131 +6,126 @@ import { DeleteBatchSchema } from '@/schemas/delete.batch.schema';
 import { PostListQuerySchema } from '@/app/post/schemas/post.list.query.schema';
 import { PostCreateSchema } from '@/app/post/schemas/post.create.schema';
 import { UserLevel } from '.prisma/client';
-import { validateAuth } from '@/libs/validateAuth';
 import { getQueryParams } from '@/libs/getQueryParams';
+import { validateParams } from '@/libs/validateParams';
+import { validateAuth } from '@/libs/validateAuth';
+import { errorHandle } from '@/libs/errorHandle';
 
 export async function GET(request: NextRequest) {
-  const validate = PostListQuerySchema.safeParse(getQueryParams(request));
-  if (validate.success) {
-    const { page, limit, sortField, sortOrder, categoryId, tagName, userName, ...rest } =
-      validate.data;
-    const conditions = Tools.getFindConditionsByQueries(rest, ['status', 'type']);
-    const OR = [];
-    if (categoryId) {
-      const categoryListAll = await prisma.category.findMany();
-      const categoryList = Tools.sonsTree(categoryListAll, categoryId);
-      OR.push({ categoryId: categoryId });
-      categoryList.forEach((item) => {
-        OR.push({ categoryId: item.id });
+  // @ts-ignore
+  return validateParams(PostListQuerySchema, getQueryParams(request), async (data) => {
+    return errorHandle(async () => {
+      const { page, limit, sortField, sortOrder, categoryId, tagName, userName, ...rest } = data;
+      const conditions = Tools.getFindConditionsByQueries(rest, ['status', 'type']);
+      const OR = [];
+      if (categoryId) {
+        const categoryListAll = await prisma.category.findMany();
+        const categoryList = Tools.sonsTree(categoryListAll, categoryId);
+        OR.push({ categoryId: categoryId });
+        categoryList.forEach((item) => {
+          OR.push({ categoryId: item.id });
+        });
+      }
+      if (tagName) {
+        const tag = {
+          list: await prisma.tag.findMany({ where: { name: tagName } }),
+          total: await prisma.tag.count({ where: { name: tagName } }),
+        };
+        if (tag.total) {
+          const id = { hasSome: [tag.list[0].id] };
+          OR.push(
+            { galleryStyleIds: id },
+            { movieActorIds: id },
+            { movieStyleIds: id },
+            { movieDirectorIds: id },
+          );
+        } else {
+          return {
+            list: [],
+            total: 0,
+          };
+        }
+      }
+      if (userName) {
+        const user = {
+          list: await prisma.user.findMany({ where: { name: userName } }),
+          total: await prisma.user.count({ where: { name: userName } }),
+        };
+        if (user.total) {
+          conditions.authorId = user.list[0].id;
+        } else {
+          return {
+            list: [],
+            total: 0,
+          };
+        }
+      }
+      if (OR.length) {
+        conditions.OR = OR;
+      }
+      console.log('conditions', conditions);
+      const list = await prisma.post.findMany({
+        where: conditions,
+        orderBy: { createdAt: 'desc' },
+        take: limit,
+        skip: (page - 1) * limit,
+        include: {
+          category: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+          author: {
+            select: {
+              id: true,
+              name: true,
+            },
+          },
+          cover: {
+            select: {
+              id: true,
+              url: true,
+              width: true,
+              height: true,
+            },
+          },
+        },
       });
-    }
-    if (tagName) {
-      const tag = {
-        list: await prisma.tag.findMany({ where: { name: tagName } }),
-        total: await prisma.tag.count({ where: { name: tagName } }),
+      const total = await prisma.post.count({ where: conditions });
+      const result = {
+        list: list.map((item) => {
+          const { content, ...rest } = item;
+          return rest;
+        }),
+        total,
       };
-      if (tag.total) {
-        const id = { hasSome: [tag.list[0].id] };
-        OR.push(
-          { galleryStyleIds: id },
-          { movieActorIds: id },
-          { movieStyleIds: id },
-          { movieDirectorIds: id },
-        );
-      } else {
-        return {
-          list: [],
-          total: 0,
-        };
-      }
-    }
-    if (userName) {
-      const user = {
-        list: await prisma.user.findMany({ where: { name: userName } }),
-        total: await prisma.user.count({ where: { name: userName } }),
-      };
-      if (user.total) {
-        conditions.authorId = user.list[0].id;
-      } else {
-        return {
-          list: [],
-          total: 0,
-        };
-      }
-    }
-    if (OR.length) {
-      conditions.OR = OR;
-    }
-    console.log('conditions', conditions);
-    const list = await prisma.post.findMany({
-      where: conditions,
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-      skip: (page - 1) * limit,
-      include: {
-        category: {
-          select: {
-            id: true,
-            title: true,
-          },
-        },
-        author: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        cover: {
-          select: {
-            id: true,
-            url: true,
-            width: true,
-            height: true,
-          },
-        },
-      },
+      return ResponseHandler.Query(result);
     });
-    const total = await prisma.post.count({ where: conditions });
-    const result = {
-      list: list.map((item) => {
-        const { content, ...rest } = item;
-        return rest;
-      }),
-      total,
-    };
-    return ResponseHandler.Query(result);
-  } else {
-    return ResponseHandler.ValidateError(validate.error);
-  }
+  });
 }
 
 export async function POST(request: NextRequest) {
-  const auth = await validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR]);
-  if (!auth.isOk) {
-    return ResponseHandler.Forbidden({ message: auth.message });
-  }
-  const data = await request.clone().json();
-  const validate = PostCreateSchema.safeParse(data);
-  if (validate.success) {
-    const result = await prisma.post.create({
-      data: { ...validate.data, authorId: auth.data!.id },
+  return validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR], async (userInfo) => {
+    const params = await request.clone().json();
+    return validateParams(PostCreateSchema, params, async (data) => {
+      return errorHandle(async () => {
+        const result = await prisma.post.create({
+          data: { ...data, authorId: userInfo.id },
+        });
+        return ResponseHandler.Create(result);
+      });
     });
-    return ResponseHandler.Create(result);
-  } else {
-    return ResponseHandler.ValidateError(validate.error);
-  }
+  });
 }
 
 export async function DELETE(request: NextRequest) {
-  const auth = await validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR]);
-  if (!auth.isOk) {
-    return ResponseHandler.Forbidden({ message: auth.message });
-  }
-  const validate = DeleteBatchSchema.safeParse(getQueryParams(request));
-  if (validate.success) {
-    const result = await prisma.post.deleteMany({ where: { id: { in: validate.data.ids } } });
-    return ResponseHandler.Delete();
-  } else {
-    return ResponseHandler.ValidateError(validate.error);
-  }
+  return validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR], async () => {
+    return validateParams(DeleteBatchSchema, getQueryParams(request), async (data) => {
+      return errorHandle(async () => {
+        const result = await prisma.post.deleteMany({ where: { id: { in: data.ids } } });
+        return ResponseHandler.Delete();
+      });
+    });
+  });
 }

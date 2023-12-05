@@ -4,19 +4,17 @@ import ResponseHandler from '@/libs/responseHandler';
 import { UserUpdateSchema } from '@/app/user/schemas/user.update.schema';
 import { UserLevel } from '.prisma/client';
 import { validateAuth } from '@/libs/validateAuth';
+import { validateParams } from '@/libs/validateParams';
+import { errorHandle } from '@/libs/errorHandle';
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
-  const auth = await validateAuth(request, [UserLevel.ADMIN]);
-  if (!auth.isOk) {
-    return ResponseHandler.Forbidden({ message: auth.message });
-  }
-  const id = params.id;
-  const data = await request.clone().json();
-  const validate = UserUpdateSchema.safeParse(data);
-  if (validate.success) {
-    const result = await prisma.user.update({ where: { id }, data: validate.data });
-    return ResponseHandler.Update(result);
-  } else {
-    return ResponseHandler.ValidateError(validate.error);
-  }
+export async function PATCH(request: NextRequest, { params: { id } }: { params: { id: string } }) {
+  return validateAuth(request, [UserLevel.ADMIN], async () => {
+    const params = await request.clone().json();
+    return validateParams(UserUpdateSchema, params, async (data) => {
+      return errorHandle(async () => {
+        const result = await prisma.user.update({ where: { id }, data });
+        return ResponseHandler.Update(result);
+      });
+    });
+  });
 }
