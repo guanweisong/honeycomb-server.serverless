@@ -36,12 +36,10 @@ export const validateAuth = async (
     return withOnFail(() => ResponseHandler.Forbidden({ message: '用户已被删除' }));
   }
   if (userInfo.status === UserStatus.DELETED) {
-    onFail?.();
     return withOnFail(() => ResponseHandler.Forbidden({ message: '用户已被禁用' }));
   }
   if (!roles.includes(userInfo.level)) {
-    onFail?.();
     return withOnFail(() => ResponseHandler.Forbidden({ message: '权限不足' }));
   }
-  onSuccess(userInfo);
+  return onSuccess(userInfo);
 };

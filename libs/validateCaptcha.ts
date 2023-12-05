@@ -20,7 +20,7 @@ export const validateCaptcha = async (request: NextRequest, onSuccess: () => voi
   });
   // @ts-ignore
   if (result.status === 200 && result.data.response === '1') {
-    onSuccess();
+    return onSuccess();
   } else {
     return ResponseHandler.Forbidden({ message: '验证码不正确' });
   }
