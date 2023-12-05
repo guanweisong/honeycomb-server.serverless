@@ -31,6 +31,9 @@ export default class ResponseHandler {
   };
 
   static Error = () => {
-    return NextResponse.json('服务器内部错误', { status: HttpStatus.INTERNAL_SERVER_ERROR });
+    return NextResponse.json(
+      { message: '服务器内部错误' },
+      { status: HttpStatus.INTERNAL_SERVER_ERROR },
+    );
   };
 }
