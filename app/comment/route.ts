@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { Resend } from 'resend';
 import Tools from '@/libs/tools';
 import ResponseHandler from '@/libs/responseHandler';
 import prisma from '@/libs/prisma';
@@ -11,6 +12,9 @@ import { validateParams } from '@/libs/validateParams';
 import { validateAuth } from '@/libs/validateAuth';
 import { validateCaptcha } from '@/libs/validateCaptcha';
 import { errorHandle } from '@/libs/errorHandle';
+import CommentEmailMessage from '@/app/components/CommentEmailMessage';
+
+const resend = new Resend(process.env.RESEND_API_KEY);
 
 export async function GET(request: NextRequest) {
   // @ts-ignore
@@ -44,6 +48,12 @@ export async function POST(request: NextRequest) {
             status: CommentStatus.PUBLISH,
             userAgent: request.headers.get('user-agent')!,
           },
+        });
+        resend.emails.send({
+          from: 'onboarding@resend.dev',
+          to: '307761682@qq.com',
+          subject: '您有一条新的评论',
+          react: CommentEmailMessage({ message: rest.content, author: rest.author }),
         });
         return ResponseHandler.Create(result);
       });
