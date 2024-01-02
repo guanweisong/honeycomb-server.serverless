@@ -5,12 +5,13 @@ import { SiteSignatureSchema } from '@/app/setting/schemas/fields/site.signature
 import { SiteCopyrightSchema } from '@/app/setting/schemas/fields/site.copyright.schema';
 import { SiteRecordNoSchema } from '@/app/setting/schemas/fields/site.record.no.schema';
 import { UrlSchema } from '@/schemas/fields/url.schema';
+import { MultiLangSchema } from '@/schemas/multiLang.schema';
 
 export const SettingUpdateSchema = z.object({
-  siteName: SiteNameSchema.optional(),
-  siteSubName: SiteSubNameSchema.optional(),
-  siteSignature: SiteSignatureSchema.optional(),
-  siteCopyright: SiteCopyrightSchema.optional(),
+  siteName: MultiLangSchema(SiteNameSchema).optional(),
+  siteSubName: MultiLangSchema(SiteSubNameSchema).optional(),
+  siteSignature: MultiLangSchema(SiteSignatureSchema).optional(),
+  siteCopyright: MultiLangSchema(SiteCopyrightSchema).optional(),
   siteRecordNo: SiteRecordNoSchema.optional(),
-  siteRecordUrl: UrlSchema.optional(),
+  siteRecordUrl: z.union([z.literal(''), UrlSchema.optional()]),
 });

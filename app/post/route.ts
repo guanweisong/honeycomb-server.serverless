@@ -15,8 +15,22 @@ export async function GET(request: NextRequest) {
   // @ts-ignore
   return validateParams(PostListQuerySchema, getQueryParams(request), async (data) => {
     return errorHandle(async () => {
-      const { page, limit, sortField, sortOrder, categoryId, tagName, userName, ...rest } = data;
-      const conditions = Tools.getFindConditionsByQueries(rest, ['status', 'type']);
+      const {
+        page,
+        limit,
+        sortField,
+        sortOrder,
+        title,
+        content,
+        categoryId,
+        tagName,
+        userName,
+        ...rest
+      } = data;
+      const conditions = Tools.getFindConditionsByQueries(rest, ['status', 'type'], {
+        title,
+        content,
+      });
       const OR = [];
       if (categoryId) {
         const categoryListAll = await prisma.category.findMany();
@@ -27,9 +41,12 @@ export async function GET(request: NextRequest) {
         });
       }
       if (tagName) {
+        const tagCondition = {
+          OR: [{ name: { is: { zh: tagName } } }, { name: { is: { en: tagName } } }],
+        };
         const tag = {
-          list: await prisma.tag.findMany({ where: { name: tagName } }),
-          total: await prisma.tag.count({ where: { name: tagName } }),
+          list: await prisma.tag.findMany({ where: tagCondition }),
+          total: await prisma.tag.count({ where: tagCondition }),
         };
         if (tag.total) {
           const id = { hasSome: [tag.list[0].id] };

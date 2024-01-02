@@ -7,6 +7,11 @@ generator client {
   provider = "prisma-client-js"
 }
 
+type MultiLang {
+  zh String
+  en String
+}
+
 model User {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime   @default(now()) @map("created_at") @db.Date
@@ -22,11 +27,11 @@ model User {
 
 model Category {
   id          String         @id @default(auto()) @map("_id") @db.ObjectId
-  description String
+  description MultiLang
   parent      String?        @db.ObjectId
   status      CategoryStatus @default(ENABLE)
-  title       String
-  titleEn     String
+  title       MultiLang
+  path        String
   createdAt   DateTime       @default(now()) @map("created_at") @db.Date
   updatedAt   DateTime       @updatedAt @map("updated_at") @db.Date
   posts       Post[]
@@ -85,9 +90,9 @@ model Page {
   createdAt DateTime   @default(now()) @map("created_at") @db.Date
   authorId  String     @map("author_id") @db.ObjectId
   author    User       @relation(fields: [authorId], references: [id])
-  content   String
+  content   MultiLang
   status    PageStatus @default(TO_AUDIT)
-  title     String
+  title     MultiLang
   views     Int        @default(0)
   updatedAt DateTime   @updatedAt @map("updated_at") @db.Date
 }
@@ -96,47 +101,46 @@ model Post {
   id               String            @id @default(auto()) @map("_id") @db.ObjectId
   commentStatus    PostCommentStatus @default(ENABLE) @map("comment_status")
   createdAt        DateTime          @default(now()) @map("created_at") @db.Date
-  galleryLocation  String?           @map("gallery_location")
+  galleryLocation  MultiLang?        @map("gallery_location")
   galleryStyleIds  String[]          @map("gallery_style_ids") @db.ObjectId
   galleryTime      DateTime?         @map("gallery_time") @db.Date
   movieActorIds    String[]          @map("movie_actor_ids") @db.ObjectId
   movieDirectorIds String[]          @map("movie_director_ids") @db.ObjectId
-  movieNameEn      String?           @map("movie_name_en")
   movieStyleIds    String[]          @map("movie_style_ids") @db.ObjectId
   movieTime        DateTime?         @map("movie_time") @db.Date
   authorId         String            @map("author_id") @db.ObjectId
   author           User              @relation(fields: [authorId], references: [id])
   categoryId       String            @map("category_id") @db.ObjectId
   category         Category          @relation(fields: [categoryId], references: [id])
-  content          String?
+  content          MultiLang?
   coverId          String?           @map("cover_id") @db.ObjectId
   cover            Media?            @relation("cover", fields: [coverId], references: [id])
-  excerpt          String?
+  excerpt          MultiLang?
   status           PostStatus        @default(TO_AUDIT)
-  title            String?
+  title            MultiLang?
   type             PostType          @default(ARTICLE)
   views            Int               @default(0)
-  quoteAuthor      String?           @map("quote_author")
-  quoteContent     String?           @map("quote_content")
+  quoteAuthor      MultiLang?        @map("quote_author")
+  quoteContent     MultiLang?        @map("quote_content")
   updatedAt        DateTime          @updatedAt @map("updated_at") @db.Date
 }
 
 model Setting {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  siteCopyright String?  @map("site_copyright")
-  siteName      String   @map("site_name")
-  siteRecordNo  String?  @map("site_record_no")
-  siteRecordUrl String?  @map("site_record_url")
-  siteSignature String?  @map("site_signature")
-  siteSubName   String?  @map("site_sub_name")
-  updatedAt     DateTime @updatedAt @map("updated_at") @db.Date
+  id            String     @id @default(auto()) @map("_id") @db.ObjectId
+  siteCopyright MultiLang? @map("site_copyright")
+  siteName      MultiLang? @map("site_name")
+  siteRecordNo  String?    @map("site_record_no")
+  siteRecordUrl String?    @map("site_record_url")
+  siteSignature MultiLang? @map("site_signature")
+  siteSubName   MultiLang? @map("site_sub_name")
+  updatedAt     DateTime   @updatedAt @map("updated_at") @db.Date
 }
 
 model Tag {
-  id                 String   @id @default(auto()) @map("_id") @db.ObjectId
-  createdAt          DateTime @default(now()) @map("created_at") @db.Date
-  name               String   @unique()
-  updatedAt          DateTime @updatedAt @map("updated_at") @db.Date
+  id        String    @id @default(auto()) @map("_id") @db.ObjectId
+  createdAt DateTime  @default(now()) @map("created_at") @db.Date
+  name      MultiLang @unique()
+  updatedAt DateTime  @updatedAt @map("updated_at") @db.Date
 }
 
 model Token {

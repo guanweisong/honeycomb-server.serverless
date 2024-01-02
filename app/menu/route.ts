@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
             // @ts-ignore
             m.title = n.title;
             // @ts-ignore
-            m.titleEn = n.titleEn;
+            m.path = n.path;
             m.parent = n.parent;
           }
         });

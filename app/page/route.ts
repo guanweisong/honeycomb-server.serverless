@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
   // @ts-ignore
   return validateParams(PageListQuerySchema, getQueryParams(request), async (data) => {
     return errorHandle(async () => {
-      const { page, limit, sortField, sortOrder, ...rest } = data;
-      const conditions = Tools.getFindConditionsByQueries(rest, ['status']);
+      const { page, limit, sortField, sortOrder, title, content, ...rest } = data;
+      const conditions = Tools.getFindConditionsByQueries(rest, ['status'], { title, content });
       const list = await prisma.page.findMany({
         where: conditions,
         orderBy: { [sortField]: sortOrder },

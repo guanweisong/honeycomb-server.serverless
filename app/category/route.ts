@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
   // @ts-ignore
   return validateParams(CategoryListQuerySchema, getQueryParams(request), async (data) => {
     return errorHandle(async () => {
-      const { id, page, limit, sortField, sortOrder, ...rest } = data;
-      const conditions = Tools.getFindConditionsByQueries(rest, ['status']);
+      const { id, page, limit, sortField, sortOrder, title, ...rest } = data;
+      const conditions = Tools.getFindConditionsByQueries(rest, ['status'], { title });
       const list = await prisma.category.findMany({
         where: conditions,
         orderBy: { [sortField]: sortOrder },

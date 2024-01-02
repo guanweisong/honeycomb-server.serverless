@@ -15,8 +15,8 @@ export async function GET(request: NextRequest) {
   // @ts-ignore
   return validateParams(TagListQuerySchema, getQueryParams(request), async (data) => {
     return errorHandle(async () => {
-      const { page, limit, sortField, sortOrder, ...rest } = data;
-      const conditions = Tools.getFindConditionsByQueries(rest, ['status']);
+      const { page, limit, sortField, sortOrder, name, ...rest } = data;
+      const conditions = Tools.getFindConditionsByQueries(rest, ['status'], { name });
       const list = await prisma.tag.findMany({
         where: conditions,
         orderBy: { [sortField]: sortOrder },

@@ -23,7 +23,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       },
     });
 
-    const imageUrls: string[] = getAllImageLinkFormMarkdown(result?.content);
+    const imageUrls: string[] = getAllImageLinkFormMarkdown(result?.content.zh);
     let imagesInContent: Media[] = [];
     if (imageUrls.length) {
       imagesInContent = await prisma.media.findMany({ where: { url: { in: imageUrls } } });

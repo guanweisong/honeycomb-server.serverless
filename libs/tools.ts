@@ -3,9 +3,10 @@ class Tools {
    * 根据controller的queries参数拼接prisma的查询条件
    * @param {*} queries controller的参数
    * @param {*} queryArray 允许查询的参数名数组
+   * @param {*} multiLangQueries controller的多语言参数
    * @return {*} conditions 拼接完成prisma的查询条件
    */
-  static getFindConditionsByQueries(queries: any, queryArray: string[]) {
+  static getFindConditionsByQueries(queries: any, queryArray: string[], multiLangQueries?: any) {
     const conditions = {} as any;
     for (const item in queries) {
       if (typeof queries[item] !== 'undefined') {
@@ -16,6 +17,13 @@ class Tools {
         }
       }
     }
+    for (const item in multiLangQueries) {
+      if (typeof multiLangQueries[item] !== 'undefined') {
+        const value = multiLangQueries[item];
+        conditions['OR'] = [{ [item]: { is: { zh: value } } }, { [item]: { is: { en: value } } }];
+      }
+    }
+    console.log('conditions', conditions);
     return conditions;
   }
 

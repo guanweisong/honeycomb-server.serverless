@@ -7,28 +7,27 @@ import { ExcerptSchema } from '@/app/post/schemas/fields/excerpt.schema';
 import { TypeSchema } from '@/app/post/schemas/fields/type.schema';
 import { QuoteAuthorSchema } from '@/app/post/schemas/fields/quote.author.schema';
 import { QuoteContentSchema } from '@/app/post/schemas/fields/quote.content.schema';
-import { MovieNameEnSchema } from '@/app/post/schemas/fields/movie.name.en.schema';
 import { GalleryLocationSchema } from '@/app/post/schemas/fields/gallery.location.schema';
 import { CommentStatusSchema } from '@/app/post/schemas/fields/comment.status.schema';
 import { DatetimeSchema } from '@/schemas/fields/datetime.schema';
+import { MultiLangSchema } from '@/schemas/multiLang.schema';
 
 export const PostCreateSchema = z.object({
-  title: TitleSchema.optional(),
-  content: ContentSchema.optional(),
-  excerpt: ExcerptSchema.optional(),
+  title: MultiLangSchema(TitleSchema).optional(),
+  content: MultiLangSchema(ContentSchema).optional(),
+  excerpt: MultiLangSchema(ExcerptSchema).optional(),
   status: StatusSchema.optional(),
   type: TypeSchema.optional(),
   categoryId: IdSchema,
   coverId: IdSchema.optional(),
   commentStatus: CommentStatusSchema.optional(),
-  quoteAuthor: QuoteAuthorSchema.optional(),
-  quoteContent: QuoteContentSchema.optional(),
+  quoteAuthor: MultiLangSchema(QuoteAuthorSchema).optional(),
+  quoteContent: MultiLangSchema(QuoteContentSchema).optional(),
   movieTime: DatetimeSchema.optional(),
-  movieNameEn: MovieNameEnSchema.optional(),
   movieStyleIds: IdSchema.array().optional(),
   movieActorIds: IdSchema.array().optional(),
   movieDirectorIds: IdSchema.array().optional(),
-  galleryLocation: GalleryLocationSchema.optional(),
+  galleryLocation: MultiLangSchema(GalleryLocationSchema).optional(),
   galleryStyleIds: IdSchema.array().optional(),
   galleryTime: DatetimeSchema.optional(),
 });

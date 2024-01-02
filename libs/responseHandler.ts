@@ -25,7 +25,7 @@ export default class ResponseHandler {
 
   static ValidateError = (error: ZodError) => {
     return NextResponse.json(
-      { message: error.issues[0].message },
+      { message: [error.issues[0].message] },
       { status: HttpStatus.BAD_REQUEST },
     );
   };
