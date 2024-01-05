@@ -9,11 +9,11 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.485.0",
     "@prisma/client": "^4.10.1",
     "@react-email/components": "0.0.12",
     "axios": "^1.2.1",
     "commonmark": "^0.30.0",
-    "cos-nodejs-sdk-v5": "^2.11.18",
     "image-size": "^1.0.2",
     "list-to-tree-lite": "^0.1.0",
     "md5": "^2.3.0",

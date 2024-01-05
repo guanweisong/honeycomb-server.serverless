@@ -4,7 +4,7 @@ import ResponseHandler from '@/libs/responseHandler';
 import prisma from '@/libs/prisma';
 import { DeleteBatchSchema } from '@/schemas/delete.batch.schema';
 import { MediaListQuerySchema } from '@/app/media/schemas/media.list.query.schema';
-import Cos from '@/libs/cos';
+import S3 from '@/libs/S3';
 import moment from 'moment';
 import { UserLevel } from '.prisma/client';
 import { validateAuth } from '@/libs/validateAuth';
@@ -48,9 +48,7 @@ export async function POST(request: NextRequest) {
       const filenameArray = file.name.split('.');
       const keySuffix = filenameArray[filenameArray.length - 1];
       const fileBuffer = await file.arrayBuffer();
-      const cosResult = await Cos.putObject({
-        Bucket: process.env.COS_BUCKET!,
-        Region: process.env.COS_REGION!,
+      const url = await S3.putObject({
         Key: `${keyContent}.${keySuffix}`,
         Body: arraybufferToBuffer(fileBuffer),
       });
@@ -59,7 +57,7 @@ export async function POST(request: NextRequest) {
         data.width = dimensions.width;
         data.height = dimensions.height;
       }
-      data.url = `https://${cosResult.Location}`;
+      data.url = url;
       data.key = `${keyContent}.${keySuffix}`;
       const result = await prisma.media.create({ data });
       return ResponseHandler.Create(result);
@@ -74,9 +72,7 @@ export async function DELETE(request: NextRequest) {
         const list = await prisma.media.findMany({ where: { id: { in: data.ids } } });
         const keys = list.map((item) => item.key);
         await prisma.media.deleteMany({ where: { id: { in: data.ids } } });
-        await Cos.deleteMultipleObject({
-          Bucket: process.env.COS_BUCKET!,
-          Region: process.env.COS_REGION!,
+        await S3.deleteMultipleObject({
           Objects: keys.map((item) => ({
             Key: item,
           })),
