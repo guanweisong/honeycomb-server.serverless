@@ -11,7 +11,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       .then((result) => result.map((item) => item.id));
     const randomArr = (arr: string[], num: number) => {
       let newArr = [];
-      for (let i = 0; i < num; i++) {
+      const length = Math.min(num, arr.length);
+      for (let i = 0; i < length; i++) {
         let temp = Math.floor(Math.random() * arr.length);
         newArr.push(arr[temp]);
         arr.splice(temp, 1);
