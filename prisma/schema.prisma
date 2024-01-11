@@ -42,6 +42,7 @@ model Comment {
   userAgent String        @map("user_agent")
   author    String
   content   String
+  site      String?
   email     String
   ip        String
   parentId  String?       @map("parent_id") @db.ObjectId
