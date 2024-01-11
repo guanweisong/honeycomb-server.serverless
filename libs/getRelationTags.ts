@@ -1,8 +1,9 @@
 import prisma from '@/libs/prisma';
+import { MultiLang } from '.prisma/client';
 
 export interface RelationTag {
   id: string;
-  name: string;
+  name: MultiLang;
 }
 
 export const getRelationTags = (ids: string[] = []): Promise<RelationTag[]> => {
