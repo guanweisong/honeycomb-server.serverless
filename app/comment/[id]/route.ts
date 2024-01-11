@@ -18,7 +18,7 @@ export async function GET(request: NextRequest, { params: { id } }: { params: { 
     };
     const result = await prisma.comment.findMany({
       where: condition,
-      orderBy: { updatedAt: 'desc' },
+      orderBy: { createdAt: 'asc' },
     });
     const list =
       result.length > 0
