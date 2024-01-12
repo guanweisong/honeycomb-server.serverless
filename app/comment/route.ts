@@ -44,17 +44,44 @@ export async function POST(request: NextRequest) {
         const result = await prisma.comment.create({
           data: {
             ...rest,
-            ip: request.ip || '127.0.0.1',
+            ip: request.headers.get('X-Forwarded-For') || '127.0.0.1',
             status: CommentStatus.PUBLISH,
             userAgent: request.headers.get('user-agent')!,
           },
         });
-        resend.emails.send({
-          from: 'onboarding@resend.dev',
-          to: '307761682@qq.com',
-          subject: '您有一条新的评论',
-          react: CommentEmailMessage({ message: rest.content, author: rest.author }),
-        });
+        // 通知管理员
+        resend.emails
+          .send({
+            from: 'notice@guanweisong.com',
+            to: '307761682@qq.com',
+            subject: '您有一条新的评论',
+            react: CommentEmailMessage({ message: rest.content, author: rest.author }),
+          })
+          .then((e) => {
+            console.log('SendEmail Success', e);
+          })
+          .catch((e) => {
+            console.log('SendEmail Error', e);
+          });
+        // 通知被评论人
+        if (rest.parentId) {
+          const parentComment = await prisma.comment.findUnique({ where: { id: rest.parentId } });
+          if (parentComment) {
+            resend.emails
+              .send({
+                from: 'notice@guanweisong.com',
+                to: parentComment.email,
+                subject: '您有一条新的评论回复来自于稻草人博客',
+                react: CommentEmailMessage({ message: rest.content, author: rest.author }),
+              })
+              .then((e) => {
+                console.log('SendEmail Success', e);
+              })
+              .catch((e) => {
+                console.log('SendEmail Error', e);
+              });
+          }
+        }
         return ResponseHandler.Create(result);
       });
     });
