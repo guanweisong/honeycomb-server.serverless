@@ -26,7 +26,7 @@ const CommentEmailMessage = ({ author, message }: MessageUsEmailProps) => {
         <Body className="bg-white my-auto mx-auto font-sans">
           <Container className="my-[20px] mx-auto p-[20px] max-w-4xl">
             <Heading className="text-black text-[20px] font-normal text-left">
-              <strong>{author}:</strong>
+              <strong>您好:</strong>
             </Heading>
             <Text className="text-[#666666] text-[12px]">{previewText}✨</Text>
           </Container>
