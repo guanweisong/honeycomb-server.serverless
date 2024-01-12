@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
         const result = await prisma.comment.create({
           data: {
             ...rest,
-            ip: request.headers.get('X-Forwarded-For') || '127.0.0.1',
+            geo: request.geo,
+            ip: request.ip,
             status: CommentStatus.PUBLISH,
             userAgent: request.headers.get('user-agent')!,
           },
