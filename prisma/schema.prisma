@@ -12,14 +12,6 @@ type MultiLang {
   en String
 }
 
-type Geo {
-  city      String?
-  country   String?
-  region    String?
-  latitude  String?
-  longitude String?
-}
-
 model User {
   id        String     @id @default(auto()) @map("_id") @db.ObjectId
   createdAt DateTime   @default(now()) @map("created_at") @db.Date
@@ -53,7 +45,6 @@ model Comment {
   site      String?
   email     String
   ip        String?
-  geo       Geo?
   parentId  String?       @map("parent_id") @db.ObjectId
   postId    String        @map("post_id") @db.ObjectId
   status    CommentStatus @default(PUBLISH)
