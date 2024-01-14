@@ -46,7 +46,11 @@ model Comment {
   email     String
   ip        String?
   parentId  String?       @map("parent_id") @db.ObjectId
-  postId    String        @map("post_id") @db.ObjectId
+  postId    String?       @map("post_id") @db.ObjectId
+  post      Post?         @relation(fields: [postId], references: [id])
+  pageId    String?       @map("page_id") @db.ObjectId
+  page      Page?         @relation(fields: [pageId], references: [id])
+  customId  String?       @map("custom_id") @db.ObjectId
   status    CommentStatus @default(PUBLISH)
   createdAt DateTime      @default(now()) @map("created_at") @db.Date
   updatedAt DateTime      @updatedAt @map("updated_at") @db.Date
@@ -96,6 +100,7 @@ model Page {
   title     MultiLang
   views     Int        @default(0)
   updatedAt DateTime   @updatedAt @map("updated_at") @db.Date
+  comments  Comment[]
 }
 
 model Post {
@@ -124,6 +129,7 @@ model Post {
   quoteAuthor      MultiLang?        @map("quote_author")
   quoteContent     MultiLang?        @map("quote_content")
   updatedAt        DateTime          @updatedAt @map("updated_at") @db.Date
+  comments         Comment[]
 }
 
 model Setting {

@@ -12,6 +12,8 @@ export const CommentCreateSchema = CaptchaSchema.extend({
   email: EmailSchema,
   site: UrlSchema.optional(),
   parentId: IdSchema.optional(),
-  postId: IdSchema,
+  postId: IdSchema.optional(),
+  pageId: IdSchema.optional(),
+  customId: IdSchema.optional(),
   status: StatusSchema,
 });

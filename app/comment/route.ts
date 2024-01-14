@@ -13,6 +13,7 @@ import { validateAuth } from '@/libs/validateAuth';
 import { validateCaptcha } from '@/libs/validateCaptcha';
 import { errorHandle } from '@/libs/errorHandle';
 import CommentEmailMessage from '@/app/components/CommentEmailMessage';
+import * as process from 'process';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
@@ -27,6 +28,32 @@ export async function GET(request: NextRequest) {
         orderBy: { [sortField]: sortOrder },
         take: limit,
         skip: (page - 1) * limit,
+        include: {
+          post: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+          page: {
+            select: {
+              id: true,
+              title: true,
+            },
+          },
+        },
+      });
+      list.forEach((item) => {
+        if (item.customId === process.env.LINK_OBJECT_ID) {
+          // @ts-ignore
+          item.custom = {
+            id: item.customId,
+            title: {
+              zh: '比邻',
+              en: 'Links',
+            },
+          };
+        }
       });
       const total = await prisma.comment.count({ where: conditions });
       const result = { list, total };
