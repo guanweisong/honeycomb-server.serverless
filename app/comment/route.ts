@@ -12,10 +12,27 @@ import { validateParams } from '@/libs/validateParams';
 import { validateAuth } from '@/libs/validateAuth';
 import { validateCaptcha } from '@/libs/validateCaptcha';
 import { errorHandle } from '@/libs/errorHandle';
-import CommentEmailMessage from '@/app/components/CommentEmailMessage';
+import AdminCommentEmailMessage from '@/app/components/EmailMessage/AdminCommentEmailMessage';
+import ReplyCommentEmailMessage from '@/app/components/EmailMessage/ReplyCommentEmailMessage';
 import * as process from 'process';
+import { getCustomCommentLink } from '@/libs/getCustomCommentLink';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
+
+const include = {
+  post: {
+    select: {
+      id: true,
+      title: true,
+    },
+  },
+  page: {
+    select: {
+      id: true,
+      title: true,
+    },
+  },
+};
 
 export async function GET(request: NextRequest) {
   // @ts-ignore
@@ -28,31 +45,13 @@ export async function GET(request: NextRequest) {
         orderBy: { [sortField]: sortOrder },
         take: limit,
         skip: (page - 1) * limit,
-        include: {
-          post: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
-          page: {
-            select: {
-              id: true,
-              title: true,
-            },
-          },
-        },
+        include: include,
       });
       list.forEach((item) => {
-        if (item.customId === process.env.LINK_OBJECT_ID) {
+        const itemCustom = getCustomCommentLink(item.customId);
+        if (itemCustom) {
           // @ts-ignore
-          item.custom = {
-            id: item.customId,
-            title: {
-              zh: '比邻',
-              en: 'Links',
-            },
-          };
+          item.custom = itemCustom;
         }
       });
       const total = await prisma.comment.count({ where: conditions });
@@ -68,7 +67,7 @@ export async function POST(request: NextRequest) {
     return validateParams(CommentCreateSchema, params, async (data) => {
       return errorHandle(async () => {
         const { captcha, ...rest } = data;
-        const result = await prisma.comment.create({
+        const createResult = await prisma.comment.create({
           data: {
             ...rest,
             ip: request.headers.get('X-Forwarded-For'),
@@ -76,13 +75,26 @@ export async function POST(request: NextRequest) {
             userAgent: request.headers.get('user-agent')!,
           },
         });
+        let currentComment = await prisma.comment.findUnique({
+          where: { id: createResult.id },
+          include: include,
+        });
+        const currentCustom = getCustomCommentLink(currentComment?.customId);
+        if (currentCustom) {
+          // @ts-ignore
+          currentComment = { ...currentComment, custom: currentCustom };
+        }
+        const setting = await prisma.setting.findFirst();
+        const siteNameZh = setting!.siteName!.zh;
+        const systemEmail = `notice@guanweisong.com`;
         // 通知管理员
         resend.emails
           .send({
-            from: 'notice@guanweisong.com',
+            from: systemEmail,
             to: '307761682@qq.com',
-            subject: '您有一条新的评论',
-            react: CommentEmailMessage({ message: rest.content, author: rest.author }),
+            subject: `[${siteNameZh}]有一条新的评论`,
+            // @ts-ignore
+            react: AdminCommentEmailMessage({ currentComment: currentComment, setting: setting! }),
           })
           .then((e) => {
             console.log('SendEmail Success', e);
@@ -92,14 +104,27 @@ export async function POST(request: NextRequest) {
           });
         // 通知被评论人
         if (rest.parentId) {
-          const parentComment = await prisma.comment.findUnique({ where: { id: rest.parentId } });
+          let parentComment = await prisma.comment.findUnique({
+            where: { id: rest.parentId },
+            include: include,
+          });
+          const parentCustom = getCustomCommentLink(parentComment?.customId);
+          if (parentCustom) {
+            // @ts-ignore
+            parentComment = { ...parentComment, custom: parentCustom };
+          }
           if (parentComment) {
             resend.emails
               .send({
-                from: 'notice@guanweisong.com',
+                from: systemEmail,
                 to: parentComment.email,
-                subject: '您有一条新的评论回复来自于稻草人博客',
-                react: CommentEmailMessage({ message: rest.content, author: rest.author }),
+                subject: `您在[${siteNameZh}]的评论有新的回复`,
+                react: ReplyCommentEmailMessage({
+                  // @ts-ignore
+                  currentComment: currentComment,
+                  setting: setting!,
+                  parentComment,
+                }),
               })
               .then((e) => {
                 console.log('SendEmail Success', e);
@@ -109,7 +134,7 @@ export async function POST(request: NextRequest) {
               });
           }
         }
-        return ResponseHandler.Create(result);
+        return ResponseHandler.Create(currentComment);
       });
     });
   });

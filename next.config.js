@@ -2,16 +2,14 @@
 const nextConfig = {
   reactStrictMode: true,
   eslint: {
-    // Warning: This allows production builds to successfully complete even if
-    // your project has ESLint errors.
     ignoreDuringBuilds: true,
   },
   typescript: {
-    // !! WARN !!
-    // Dangerously allow production builds to successfully complete even if
-    // your project has type errors.
-    // !! WARN !!
     ignoreBuildErrors: true,
+  },
+  env: {
+    LINK_OBJECT_ID: '5349b4ddd2781d08c09890f3',
+    FRONT_DOMAIN: 'www.guanweisong.com',
   },
   experimental: {
     serverComponentsExternalPackages: [
