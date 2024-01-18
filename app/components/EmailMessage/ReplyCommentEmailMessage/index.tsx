@@ -4,13 +4,13 @@ import { Comment, Setting } from '.prisma/client';
 import EmailContainer from '@/app/components/EmailMessage/Components/Container';
 import { getPostOrPageOrCustomTitleAndLinkFromComment } from '@/libs/getPostOrPageOrCustomTitleAndLinkFromComment';
 
-type ReplyMessageUsEmailProps = {
+type ReplyMessageEmailProps = {
   currentComment: Comment;
   parentComment: Comment;
   setting: Setting;
 };
 
-const ReplyCommentEmailMessage = (props: ReplyMessageUsEmailProps) => {
+const ReplyCommentEmailMessage = (props: ReplyMessageEmailProps) => {
   const { currentComment, parentComment, setting } = props;
   const previewText = `您在${setting.siteName?.zh}的评论有新的回复`;
 

@@ -4,12 +4,12 @@ import { Comment, Setting } from '.prisma/client';
 import EmailContainer from '@/app/components/EmailMessage/Components/Container';
 import { getPostOrPageOrCustomTitleAndLinkFromComment } from '@/libs/getPostOrPageOrCustomTitleAndLinkFromComment';
 
-type AdminMessageUsEmailProps = {
+type AdminMessageEmailProps = {
   currentComment: Comment;
   setting: Setting;
 };
 
-const AdminCommentEmailMessage = (props: AdminMessageUsEmailProps) => {
+const AdminCommentEmailMessage = (props: AdminMessageEmailProps) => {
   const { currentComment, setting } = props;
   const previewText = `${setting.siteName?.zh}有一条新的评论`;
   const { postTitle, postLink } = getPostOrPageOrCustomTitleAndLinkFromComment(currentComment);
