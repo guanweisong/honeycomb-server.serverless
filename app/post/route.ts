@@ -83,7 +83,7 @@ export async function GET(request: NextRequest) {
       console.log('conditions', conditions);
       const list = await prisma.post.findMany({
         where: conditions,
-        orderBy: { createdAt: 'desc' },
+        orderBy: { [sortField]: sortOrder },
         take: limit,
         skip: (page - 1) * limit,
         include: {
