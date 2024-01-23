@@ -11,7 +11,7 @@ import { validateParams } from '@/libs/validateParams';
 import { errorHandle } from '@/libs/errorHandle';
 import { getQueryParams } from '@/libs/getQueryParams';
 import { CommentQuerySchema } from '@/app/comment/schemas/comment.query.schema';
-import { CommentType } from '@/prisma/CommentType';
+import { CommentType } from '@/types/CommentType';
 
 export async function GET(request: NextRequest, { params: { id } }: { params: { id: string } }) {
   return validateParams(CommentQuerySchema, getQueryParams(request), async (data) => {
