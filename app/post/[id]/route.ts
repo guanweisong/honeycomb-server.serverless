@@ -36,12 +36,12 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       },
     });
 
-    // const [movieActors, movieDirectors, movieStyles, galleryStyles] = await Promise.all([
-    //   getRelationTags(result?.movieActorIds),
-    //   getRelationTags(result?.movieDirectorIds),
-    //   getRelationTags(result?.movieStyleIds),
-    //   getRelationTags(result?.galleryStyleIds),
-    // ]);
+    const [movieActors, movieDirectors, movieStyles, galleryStyles] = await Promise.all([
+      getRelationTags(result?.movieActorIds),
+      getRelationTags(result?.movieDirectorIds),
+      getRelationTags(result?.movieStyleIds),
+      getRelationTags(result?.galleryStyleIds),
+    ]);
 
     const imageUrls: string[] = getAllImageLinkFormMarkdown(result?.content?.zh);
     let imagesInContent: Media[] = [];
@@ -51,10 +51,10 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 
     return ResponseHandler.Query({
       ...result,
-      // movieActors,
-      // movieDirectors,
-      // movieStyles,
-      // galleryStyles,
+      movieActors,
+      movieDirectors,
+      movieStyles,
+      galleryStyles,
       imagesInContent,
     });
   });
