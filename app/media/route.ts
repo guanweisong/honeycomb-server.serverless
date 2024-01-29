@@ -13,6 +13,7 @@ import { arraybufferToBuffer } from '@/libs/arraybufferToBuffer';
 import sizeOf from 'image-size';
 import { validateParams } from '@/libs/validateParams';
 import { errorHandle } from '@/libs/errorHandle';
+import { getColor } from '@/libs/colorThief';
 
 export async function GET(request: NextRequest) {
   return validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR, UserLevel.GUEST], async () => {
@@ -51,11 +52,14 @@ export async function POST(request: NextRequest) {
       const url = await S3.putObject({
         Key: `${keyContent}.${keySuffix}`,
         Body: arraybufferToBuffer(fileBuffer),
+        ContentType: file.type,
       });
       if (file.type.startsWith('image')) {
         const dimensions = sizeOf(arraybufferToBuffer(fileBuffer));
         data.width = dimensions.width;
         data.height = dimensions.height;
+        const color = await getColor(url);
+        data.color = `rgb(${color.join(',')})`;
       }
       data.url = url;
       data.key = `${keyContent}.${keySuffix}`;

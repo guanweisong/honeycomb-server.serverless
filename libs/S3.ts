@@ -20,10 +20,11 @@ class S3 {
    * @param params
    */
   static putObject = async (params: any): Promise<string> => {
-    const { Key, Body } = params;
+    const { Key, Body, ContentType } = params;
     await S3.S3().send(
       new PutObjectCommand({
         Bucket: process.env.R2_BUCKET_NAME,
+        ContentType,
         Key,
         Body,
       }),
