@@ -105,6 +105,7 @@ export async function GET(request: NextRequest) {
               url: true,
               width: true,
               height: true,
+              color: true,
             },
           },
         },
