@@ -15,6 +15,8 @@ import { validateParams } from '@/libs/validateParams';
 import { errorHandle } from '@/libs/errorHandle';
 import { getColor } from '@/libs/colorThief';
 
+export const dynamic = 'force-dynamic';
+
 export async function GET(request: NextRequest) {
   return validateAuth(request, [UserLevel.ADMIN, UserLevel.EDITOR, UserLevel.GUEST], async () => {
     // @ts-ignore
